@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const DOCUMENTS = [
   {
-    id: 'pan',
+    id: 'pan-card',
     title: 'PAN Card',
     description: 'Apply for a new Permanent Account Number or request corrections to an existing card.',
     category: 'Identity',
@@ -10,7 +11,7 @@ const DOCUMENTS = [
     icon: '💳'
   },
   {
-    id: 'aadhaar',
+    id: 'aadhaar-card',
     title: 'Aadhaar Card',
     description: 'Update your address, mobile number, demographics, or order a PVC Aadhaar.',
     category: 'Identity',
@@ -34,7 +35,7 @@ const DOCUMENTS = [
     icon: '🚗'
   },
   {
-    id: 'income',
+    id: 'income-certificate',
     title: 'Income Certificate',
     description: 'Obtain an official certificate proving your family\'s annual income for subsidies.',
     category: 'Certificates',
@@ -64,6 +65,7 @@ const CATEGORIES = ['All', 'Identity', 'Certificates', 'Travel', 'Transport'];
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const navigate = useNavigate();
 
   const filteredDocuments = useMemo(() => {
     return DOCUMENTS.filter(doc => {
@@ -111,7 +113,12 @@ export default function Search() {
         {filteredDocuments.length > 0 ? (
           <div className="documents-grid">
             {filteredDocuments.map(doc => (
-              <div key={doc.id} className="doc-card">
+              <div 
+                key={doc.id} 
+                className="doc-card" 
+                onClick={() => navigate(`/documents/${doc.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="doc-card-header">
                   <div className="doc-icon">{doc.icon}</div>
                   <span className="doc-category-label">{doc.category}</span>
@@ -124,7 +131,9 @@ export default function Search() {
                   ))}
                 </div>
                 <div className="doc-actions">
-                  <button className="btn-secondary doc-btn">View Requirements</button>
+                  <button className="btn-secondary doc-btn" onClick={() => navigate(`/documents/${doc.id}`)}>
+                    View Requirements
+                  </button>
                 </div>
               </div>
             ))}

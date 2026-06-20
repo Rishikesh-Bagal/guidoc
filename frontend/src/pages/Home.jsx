@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <>
       {/* Hero Section */}
@@ -27,7 +29,11 @@ export default function Home() {
         </div>
 
         <div className="services-grid">
-          <div className="service-card">
+          <div 
+            className="service-card" 
+            onClick={() => navigate('/documents/pan-card')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="service-icon">💳</div>
             <h3>PAN Card</h3>
             <p className="service-desc">New applications, corrections, or duplicate requests.</p>
@@ -36,7 +42,11 @@ export default function Home() {
               <li>Corrections</li>
             </ul>
           </div>
-          <div className="service-card">
+          <div 
+            className="service-card" 
+            onClick={() => navigate('/documents/passport')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="service-icon">🛂</div>
             <h3>Passport</h3>
             <p className="service-desc">Fresh issuance, renewals, and Police Clearance Certificates.</p>
@@ -45,7 +55,11 @@ export default function Home() {
               <li>PCC</li>
             </ul>
           </div>
-          <div className="service-card">
+          <div 
+            className="service-card" 
+            onClick={() => navigate('/documents/aadhaar-card')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="service-icon">🆔</div>
             <h3>Aadhaar Card</h3>
             <p className="service-desc">Address updates, demographic changes, and PVC card orders.</p>
@@ -54,7 +68,11 @@ export default function Home() {
               <li>PVC Order</li>
             </ul>
           </div>
-          <div className="service-card">
+          <div 
+            className="service-card" 
+            onClick={() => navigate('/documents/income-certificate')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="service-icon">📜</div>
             <h3>State Certificates</h3>
             <p className="service-desc">Income, Caste, and Domicile certificates for various states.</p>
