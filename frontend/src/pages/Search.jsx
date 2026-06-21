@@ -27,14 +27,6 @@ const DOCUMENTS = [
     icon: '🛂'
   },
   {
-    id: 'dl',
-    title: 'Driving License',
-    description: 'Apply for a learner\'s license, permanent license, or international driving permit.',
-    category: 'Transport',
-    tags: ['RTO', 'Vehicle', 'Parivahan'],
-    icon: '🚗'
-  },
-  {
     id: 'income-certificate',
     title: 'Income Certificate',
     description: 'Obtain an official certificate proving your family\'s annual income for subsidies.',
@@ -60,7 +52,7 @@ const DOCUMENTS = [
   }
 ];
 
-const CATEGORIES = ['All', 'Identity', 'Certificates', 'Travel', 'Transport'];
+const CATEGORIES = ['All', 'Identity', 'Travel', 'Certificates'];
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
