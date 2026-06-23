@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const config = require('./config/env');
 const routesV1 = require('./routes/v1');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+const connectDB = require('./config/database');
 
 const app = express();
 
@@ -29,8 +30,20 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-app.listen(config.port, () => {
-  console.log(`Server is running on port ${config.port} in ${config.env} mode`);
-});
+const startServer = async () => {
+  try {
+    // Connect to database first
+    await connectDB();
+    
+    app.listen(config.port, () => {
+      console.log(`Server is running on port ${config.port} in ${config.env} mode`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 module.exports = app;
