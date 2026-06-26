@@ -1,14 +1,58 @@
-import React, { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { documentDetails } from '../data/documentDetails';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { documentService } from '../services/documentService';
 
 export default function DocumentDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const doc = documentDetails[id];
+  const [doc, setDoc] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeProcess, setActiveProcess] = useState('online');
 
-  if (!doc) {
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchDocument = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await documentService.getDocumentBySlug(id);
+        if (isMounted) {
+          if (data) {
+            setDoc(data);
+          } else {
+            setError('Document Not Found');
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError('Document Not Found');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchDocument();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="doc-details-page error-state" style={{ padding: '60px 20px', minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="error-icon" style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
+        <h3>Loading document details...</h3>
+      </div>
+    );
+  }
+
+  if (error || !doc) {
     return (
       <div className="doc-details-page error-state">
         <div className="error-icon">📄❓</div>
@@ -51,33 +95,37 @@ export default function DocumentDetails() {
             <p className="doc-overview-text">{doc.overview}</p>
           </section>
 
-          <section className="doc-section">
-            <h2>Eligibility</h2>
-            <ul className="doc-list eligibility-list">
-              {doc.eligibility.map((item, idx) => (
-                <li key={idx}>
-                  <span className="list-icon">✓</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </section>
+          {doc.eligibility && doc.eligibility.length > 0 && (
+            <section className="doc-section">
+              <h2>Eligibility</h2>
+              <ul className="doc-list eligibility-list">
+                {doc.eligibility.map((item, idx) => (
+                  <li key={idx}>
+                    <span className="list-icon">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-          <section className="doc-section">
-            <h2>Required Documents (General)</h2>
-            <div className="req-docs-container">
-              {doc.requiredDocuments.map((group, idx) => (
-                <div key={idx} className="req-doc-group">
-                  <h3>{group.category}</h3>
-                  <ul className="doc-list">
-                    {group.items.map((item, itemIdx) => (
-                      <li key={itemIdx}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </section>
+          {doc.requiredDocuments && doc.requiredDocuments.length > 0 && (
+            <section className="doc-section">
+              <h2>Required Documents (General)</h2>
+              <div className="req-docs-container">
+                {doc.requiredDocuments.map((group, idx) => (
+                  <div key={idx} className="req-doc-group">
+                    <h3>{group.category}</h3>
+                    <ul className="doc-list">
+                      {group.items.map((item, itemIdx) => (
+                        <li key={itemIdx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           <section className="doc-section process-section">
             <div className="process-header">
@@ -118,28 +166,32 @@ export default function DocumentDetails() {
                 <p>{processData.docRequirements}</p>
               </div>
 
-              <div className="doc-steps-container">
-                {processData.steps.map((step, idx) => (
-                  <div key={idx} className="doc-step">
-                    <div className="doc-step-number">{idx + 1}</div>
-                    <div className="doc-step-text">{step}</div>
-                  </div>
-                ))}
-              </div>
+              {processData.steps && processData.steps.length > 0 && (
+                <div className="doc-steps-container">
+                  {processData.steps.map((step, idx) => (
+                    <div key={idx} className="doc-step">
+                      <div className="doc-step-number">{idx + 1}</div>
+                      <div className="doc-step-text">{step}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
-          <section className="doc-section">
-            <h2>Frequently Asked Questions</h2>
-            <div className="faq-container">
-              {doc.faq.map((item, idx) => (
-                <div key={idx} className="faq-item">
-                  <h4 className="faq-q">Q: {item.question}</h4>
-                  <p className="faq-a">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </section>
+          {doc.faq && doc.faq.length > 0 && (
+            <section className="doc-section">
+              <h2>Frequently Asked Questions</h2>
+              <div className="faq-container">
+                {doc.faq.map((item, idx) => (
+                  <div key={idx} className="faq-item">
+                    <h4 className="faq-q">Q: {item.question}</h4>
+                    <p className="faq-a">{item.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         <div className="doc-sidebar-col">
