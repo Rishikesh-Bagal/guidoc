@@ -1,75 +1,61 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { documentService } from '../services/documentService';
 
-const DOCUMENTS = [
-  {
-    id: 'pan-card',
-    title: 'PAN Card',
-    description: 'Apply for a new Permanent Account Number or request corrections to an existing card.',
-    category: 'Identity',
-    tags: ['Income Tax', 'KYC', 'ID Proof'],
-    icon: '💳'
-  },
-  {
-    id: 'aadhaar-card',
-    title: 'Aadhaar Card',
-    description: 'Update your address, mobile number, demographics, or order a PVC Aadhaar.',
-    category: 'Identity',
-    tags: ['UIDAI', 'Biometric', 'Address Proof'],
-    icon: '🆔'
-  },
-  {
-    id: 'passport',
-    title: 'Passport',
-    description: 'Apply for fresh issuance, renewal, or Police Clearance Certificate (PCC).',
-    category: 'Travel',
-    tags: ['International', 'Identity', 'MEA'],
-    icon: '🛂'
-  },
-  {
-    id: 'income-certificate',
-    title: 'Income Certificate',
-    description: 'Obtain an official certificate proving your family\'s annual income for subsidies.',
-    category: 'Certificates',
-    tags: ['State Govt', 'Subsidies', 'Education'],
-    icon: '📜'
-  },
-  {
-    id: 'domicile',
-    title: 'Domicile Certificate',
-    description: 'Prove your residency status in a specific state for educational or employment quotas.',
-    category: 'Certificates',
-    tags: ['State Govt', 'Residency', 'Education'],
-    icon: '🏠'
-  },
-  {
-    id: 'voter',
-    title: 'Voter ID',
-    description: 'Register as a new voter, update your constituency, or request a duplicate EPIC card.',
-    category: 'Identity',
-    tags: ['Election Commission', 'Democracy'],
-    icon: '🗳️'
-  }
-];
-
-const CATEGORIES = ['All', 'Identity', 'Travel', 'Certificates'];
+const CATEGORIES = ['All', 'Identity', 'Vehicle', 'Income & Taxes', 'Property', 'Education', 'Health', 'Other'];
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const navigate = useNavigate();
 
-  const filteredDocuments = useMemo(() => {
-    return DOCUMENTS.filter(doc => {
-      const matchesSearch = doc.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            doc.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            doc.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      const matchesCategory = activeCategory === 'All' || doc.category === activeCategory;
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchDocuments = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        let docs = [];
+        if (searchQuery.trim()) {
+          docs = await documentService.searchDocuments(searchQuery);
+        } else {
+          docs = await documentService.getAllDocuments();
+        }
+        if (isMounted) {
+          setDocuments(docs);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError('Failed to load documents. Please try again later.');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
 
-      return matchesSearch && matchesCategory;
+    const timerId = setTimeout(() => {
+      fetchDocuments();
+    }, 300); // 300ms debounce
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timerId);
+    };
+  }, [searchQuery]);
+
+  const filteredDocuments = useMemo(() => {
+    return documents.filter(doc => {
+      const matchesCategory = activeCategory === 'All' || doc.category === activeCategory;
+      return matchesCategory;
     });
-  }, [searchQuery, activeCategory]);
+  }, [documents, activeCategory]);
 
   return (
     <div className="search-page">
@@ -102,7 +88,20 @@ export default function Search() {
       </div>
 
       <div className="search-results-container">
-        {filteredDocuments.length > 0 ? (
+        {loading ? (
+          <div className="empty-state">
+            <div className="empty-icon">⏳</div>
+            <h3>Loading documents...</h3>
+          </div>
+        ) : error ? (
+          <div className="empty-state">
+            <div className="empty-icon">⚠️</div>
+            <h3>{error}</h3>
+            <button className="btn-secondary" onClick={() => setSearchQuery(searchQuery)}>
+              Retry
+            </button>
+          </div>
+        ) : filteredDocuments.length > 0 ? (
           <div className="documents-grid">
             {filteredDocuments.map(doc => (
               <div 
