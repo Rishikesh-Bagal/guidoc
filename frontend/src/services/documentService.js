@@ -54,7 +54,12 @@ const mapDocument = (doc) => {
       { type: 'General', amount: doc.fees || 'Free' }
     ],
     processingTime: doc.processingTime || 'Varies',
-    faq: doc.faqs || []
+    faq: doc.faqs || [],
+    formUrl: doc.formUrl || null,
+    importantNotes: doc.importantNotes || [],
+    commonMistakes: doc.commonMistakes || [],
+    tips: doc.tips || [],
+    warnings: doc.warnings || []
   };
 };
 
