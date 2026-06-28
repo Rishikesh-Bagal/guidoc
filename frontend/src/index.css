@@ -1368,6 +1368,73 @@ body {
   border: 1px dashed var(--border-color);
 }
 
+/* Office Locator Card */
+.office-locator-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.office-locator-header {
+  background-color: rgba(248, 250, 252, 0.05);
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.office-locator-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.15rem;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.office-icon {
+  color: var(--primary-color);
+}
+
+.department-badge {
+  background-color: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(37, 99, 235, 0.3);
+}
+
+.office-locator-body {
+  padding: 1.5rem;
+}
+
+.office-type {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.office-description {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.locator-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
 @media (max-width: 768px) {
   .official-resources-banner {
     flex-direction: column;
