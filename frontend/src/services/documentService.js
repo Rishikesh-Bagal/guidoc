@@ -59,7 +59,8 @@ const mapDocument = (doc) => {
     importantNotes: doc.importantNotes || [],
     commonMistakes: doc.commonMistakes || [],
     tips: doc.tips || [],
-    warnings: doc.warnings || []
+    warnings: doc.warnings || [],
+    officeInfo: doc.officeInfo || null
   };
 };
 

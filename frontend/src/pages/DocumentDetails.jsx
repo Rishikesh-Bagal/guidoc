@@ -4,7 +4,7 @@ import { documentService } from '../services/documentService';
 import { 
   ArrowLeft, FileText, Download, ExternalLink, Clock, IndianRupee, 
   CheckCircle2, AlertTriangle, AlertCircle, Lightbulb, ChevronDown, 
-  ChevronUp, MapPin, Monitor, HelpCircle, FileCheck, Info 
+  ChevronUp, MapPin, Monitor, HelpCircle, FileCheck, Info, Building 
 } from 'lucide-react';
 
 export default function DocumentDetails() {
@@ -206,9 +206,31 @@ export default function DocumentDetails() {
                   </a>
                 </div>
               ) : (
-                <div className="process-info-card offline-info">
-                  <h3>Visit Location</h3>
-                  <p>{processData.centerInfo}</p>
+                <div className="office-locator-card">
+                  <div className="office-locator-header">
+                    <h3><Building size={20} className="office-icon" /> Visit Official Location</h3>
+                    {doc.officeInfo?.officialDepartment && (
+                      <span className="department-badge">{doc.officeInfo.officialDepartment}</span>
+                    )}
+                  </div>
+                  <div className="office-locator-body">
+                    {doc.officeInfo ? (
+                      <>
+                        <h4 className="office-type">{doc.officeInfo.officeType}</h4>
+                        <p className="office-description">{doc.officeInfo.officeDescription}</p>
+                        <a 
+                          href={`https://www.google.com/maps/search/${encodeURIComponent(doc.officeInfo.officeType)}`} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="btn-primary locator-btn"
+                        >
+                          <MapPin size={16} /> Find Nearby Office
+                        </a>
+                      </>
+                    ) : (
+                      <p>{processData.centerInfo}</p>
+                    )}
+                  </div>
                 </div>
               )}
 
