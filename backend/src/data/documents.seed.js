@@ -49,7 +49,17 @@ const documents = [
       }
     ],
     officialWebsite: 'https://www.onlineservices.nsdl.com/',
-    isActive: true
+    formUrl: 'https://www.tin-nsdl.com/downloads/pan/download/Form_49A.pdf',
+    importantNotes: ['Ensure your Aadhaar details match exactly with your PAN application.', 'Use only black ink for signatures.'],
+    commonMistakes: ['Uploading blurred photographs', 'Signing outside the designated box'],
+    tips: ['Keep your Aadhaar registered mobile number handy for OTP verification.'],
+    warnings: ['Do not apply for a new PAN if you already have one; it is a punishable offence.'],
+    isActive: true,
+    officeInfo: {
+      officeType: 'NSDL PAN Centre / UTIITSL Centre',
+      officeDescription: 'Authorized centers for processing PAN card applications.',
+      officialDepartment: 'Income Tax Department'
+    }
   },
   {
     name: 'Aadhaar Card',
@@ -92,7 +102,17 @@ const documents = [
       }
     ],
     officialWebsite: 'https://uidai.gov.in/',
-    isActive: true
+    formUrl: 'https://uidai.gov.in/images/aadhaar_enrolment_correction_form_version_2.1.pdf',
+    importantNotes: ['Biometric updates are mandatory for children at age 5 and 15.', 'Mobile number linking requires a physical visit.'],
+    commonMistakes: ['Providing incomplete address details', 'Submitting non-standard document proofs'],
+    tips: ['Book an appointment online to save time at the center.'],
+    warnings: ['Never share your Aadhaar OTP with unknown persons.'],
+    isActive: true,
+    officeInfo: {
+      officeType: 'Aadhaar Seva Kendra',
+      officeDescription: 'Centers dedicated to Aadhaar enrolment and update services.',
+      officialDepartment: 'UIDAI'
+    }
   },
   {
     name: 'Passport',
@@ -133,7 +153,16 @@ const documents = [
       }
     ],
     officialWebsite: 'https://portal2.passportindia.gov.in/',
-    isActive: true
+    importantNotes: ['Police verification is mandatory for fresh passports.', 'Keep all original documents ready for PSK visit.'],
+    commonMistakes: ['Mismatched names across different ID proofs', 'Incorrect permanent address'],
+    tips: ['Carry self-attested photocopies of all documents.', 'Reach the PSK 15 minutes before your appointment time.'],
+    warnings: ['Suppression of facts can lead to passport denial and legal action.'],
+    isActive: true,
+    officeInfo: {
+      officeType: 'Passport Seva Kendra',
+      officeDescription: 'Authorized centers for passport services.',
+      officialDepartment: 'Ministry of External Affairs'
+    }
   },
   {
     name: 'Driving License',
@@ -182,7 +211,17 @@ const documents = [
       }
     ],
     officialWebsite: 'https://parivahan.gov.in/parivahan/',
-    isActive: true
+    formUrl: 'https://parivahan.gov.in/parivahan/sites/default/files/DownloadForm/form4.pdf',
+    importantNotes: ['You must bring your own vehicle of the correct class for the driving test.'],
+    commonMistakes: ['Forgetting to bring the original Learner\'s License to the test', 'Not wearing a seatbelt/helmet during the test'],
+    tips: ['Practice reversing and parking thoroughly before the test.'],
+    warnings: ['Driving without a valid license attracts heavy penalties under the Motor Vehicles Act.'],
+    isActive: true,
+    officeInfo: {
+      officeType: 'Regional Transport Office',
+      officeDescription: 'Local transport office for vehicle registration and licensing.',
+      officialDepartment: 'Ministry of Road Transport and Highways'
+    }
   },
   {
     name: 'Income Certificate',
@@ -228,7 +267,16 @@ const documents = [
       }
     ],
     officialWebsite: 'https://www.india.gov.in',
-    isActive: true
+    importantNotes: ['Income includes salary, agriculture, business, and rent.', 'The certificate is usually valid for one financial year.'],
+    commonMistakes: ['Not declaring all sources of income', 'Submitting outdated salary slips'],
+    tips: ['Attach your latest ITR for faster processing.'],
+    warnings: ['Providing false income details to claim benefits is a criminal offence.'],
+    isActive: true,
+    officeInfo: {
+      officeType: 'Tehsil Office / Common Service Centre',
+      officeDescription: 'Local government offices handling revenue and civil matters.',
+      officialDepartment: 'Revenue Department'
+    }
   }
 ];
 

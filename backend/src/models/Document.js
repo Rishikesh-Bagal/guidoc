@@ -87,10 +87,39 @@ const documentSchema = new mongoose.Schema({
       'Please enter a valid URL'
     ]
   },
+  formUrl: {
+    type: String,
+    trim: true,
+    match: [
+      /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/, 
+      'Please enter a valid URL'
+    ]
+  },
+  importantNotes: {
+    type: [String],
+    default: []
+  },
+  commonMistakes: {
+    type: [String],
+    default: []
+  },
+  tips: {
+    type: [String],
+    default: []
+  },
+  warnings: {
+    type: [String],
+    default: []
+  },
   isActive: {
     type: Boolean,
     default: true,
     index: true // Useful for filtering out inactive documents on the frontend
+  },
+  officeInfo: {
+    officeType: { type: String, trim: true },
+    officeDescription: { type: String, trim: true },
+    officialDepartment: { type: String, trim: true }
   }
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt
