@@ -274,6 +274,19 @@ export default function DocumentDetails() {
         </div>
 
         <div className="doc-sidebar-col">
+          {/* Eligibility Wizard CTA */}
+          <div className="sidebar-card info-card" style={{ backgroundColor: '#eff6ff', borderColor: '#bfdbfe' }}>
+            <h3 style={{ color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <CheckCircle2 size={18} /> Am I Eligible?
+            </h3>
+            <p style={{ marginBottom: '15px', color: '#1e40af', fontSize: '0.95rem' }}>
+              Use our personalized wizard to find out your exact requirements and eligibility.
+            </p>
+            <button onClick={() => navigate('/eligibility')} className="btn-primary" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+              Check Eligibility <ArrowLeft size={16} style={{ transform: 'rotate(180deg)' }} />
+            </button>
+          </div>
+
           {/* Important Notes */}
           {doc.importantNotes && doc.importantNotes.length > 0 && (
             <div className="sidebar-card info-card">

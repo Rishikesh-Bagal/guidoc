@@ -12,8 +12,8 @@ export default function Home() {
           Get clear, step-by-step guidance for your Aadhaar, PAN, Passport, and state certificates. No legal jargon, just simple steps.
         </p>
         <div className="hero-actions">
-          <button className="btn-primary" style={{ fontSize: '1.05rem', padding: '14px 28px' }}>
-            Find Your Document
+          <button onClick={() => navigate('/eligibility')} className="btn-primary" style={{ fontSize: '1.05rem', padding: '14px 28px' }}>
+            Check Eligibility
           </button>
           <button className="btn-secondary" style={{ fontSize: '1.05rem', padding: '14px 28px' }}>
             Learn How It Works
