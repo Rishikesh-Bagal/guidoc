@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './wizard.css';
 
-const ResultCard = ({ result, onRestart }) => {
+const ResultCard = ({ result, onRestart, selectedDocument }) => {
+  const navigate = useNavigate();
   if (!result) return null;
 
   return (
@@ -77,25 +79,33 @@ const ResultCard = ({ result, onRestart }) => {
         )}
 
         {/* Action Buttons */}
-        <div className="wizard-actions">
-          <button 
-            onClick={onRestart}
-            className="btn-secondary"
-          >
-            Start Over
-          </button>
+        <div className="wizard-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
           
+          <button 
+            onClick={() => navigate(`/documents/${selectedDocument}`)}
+            className="btn-primary"
+          >
+            View Complete GUIDOC Guide
+          </button>
+
           {result.officialPortal && (
             <a 
               href={result.officialPortal.startsWith('http') ? result.officialPortal : `https://${result.officialPortal}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary"
+              className="btn-secondary"
               style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
             >
-              Go to Official Portal →
+              Go to Official Portal
             </a>
           )}
+          
+          <button 
+            onClick={onRestart}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 600, cursor: 'pointer', padding: '0.5rem', textDecoration: 'underline' }}
+          >
+            Start Over
+          </button>
         </div>
       </div>
     </div>

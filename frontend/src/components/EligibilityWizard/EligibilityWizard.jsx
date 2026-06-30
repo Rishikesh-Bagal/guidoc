@@ -115,7 +115,7 @@ const EligibilityWizard = () => {
   };
 
   if (result) {
-    return <ResultCard result={result} onRestart={handleRestart} />;
+    return <ResultCard result={result} onRestart={handleRestart} selectedDocument={selectedDocument} />;
   }
 
   return (
