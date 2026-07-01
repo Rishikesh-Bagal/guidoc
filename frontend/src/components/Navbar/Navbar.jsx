@@ -1,7 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import UserMenu from '../Auth/UserMenu';
 
 export default function Navbar() {
+  const { currentUser } = useAuth();
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -20,7 +24,11 @@ export default function Navbar() {
           </li>
         </ul>
         <div className="nav-actions">
-          <button className="btn-primary">Sign In</button>
+          {currentUser ? (
+            <UserMenu />
+          ) : (
+            <Link to="/login" className="btn-primary">Sign In</Link>
+          )}
         </div>
       </div>
     </nav>
