@@ -5,6 +5,10 @@ import Home from '../pages/Home';
 import Search from '../pages/Search';
 import DocumentDetails from '../pages/DocumentDetails';
 import WizardPage from '../pages/WizardPage';
+import LoginPage from '../pages/LoginPage';
+import RegisterPage from '../pages/RegisterPage';
+import DashboardPage from '../pages/DashboardPage';
+import ProtectedRoute from '../components/Auth/ProtectedRoute';
 
 export default function AppRoutes() {
   return (
@@ -15,6 +19,12 @@ export default function AppRoutes() {
           <Route path="/search" element={<Search />} />
           <Route path="/documents/:id" element={<DocumentDetails />} />
           <Route path="/eligibility" element={<WizardPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Route>
         </Route>
       </Routes>
     </Router>
