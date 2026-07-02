@@ -3,6 +3,8 @@ import { MessageCircle, X, Send } from 'lucide-react';
 import axios from 'axios';
 import ChatMessage from './ChatMessage';
 import SuggestedQuestions from './SuggestedQuestions';
+import { useAuth } from '../../contexts/AuthContext';
+import { userService } from '../../services/userService';
 import './AIChatWidget.css';
 
 export default function AIChatWidget() {
@@ -13,6 +15,7 @@ export default function AIChatWidget() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const { currentUser } = useAuth();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -41,6 +44,9 @@ export default function AIChatWidget() {
       });
       
       setMessages(prev => [...prev, { role: 'bot', content: response.data.reply }]);
+      if (currentUser) {
+        userService.saveAIChatMessage(currentUser.uid, text, response.data.reply);
+      }
     } catch (error) {
       console.error('Chat error:', error);
       let errorMsg = 'Sorry, I am having trouble connecting to the server. Please try again later.';
