@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { documentService } from '../services/documentService';
+import { useAuth } from '../contexts/AuthContext';
+import { userService } from '../services/userService';
 
 const CATEGORIES = ['All', 'Identity', 'Vehicle', 'Income & Taxes', 'Property', 'Education', 'Health', 'Other'];
 
@@ -12,6 +14,7 @@ export default function Search() {
   const [error, setError] = useState(null);
   
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -23,6 +26,10 @@ export default function Search() {
         let docs = [];
         if (searchQuery.trim()) {
           docs = await documentService.searchDocuments(searchQuery);
+          // Save successful search if user is logged in
+          if (isMounted && currentUser && docs.length > 0 && searchQuery.trim().length > 2) {
+             userService.saveSearch(currentUser.uid, searchQuery.trim());
+          }
         } else {
           docs = await documentService.getAllDocuments();
         }
@@ -42,13 +49,13 @@ export default function Search() {
 
     const timerId = setTimeout(() => {
       fetchDocuments();
-    }, 300); // 300ms debounce
+    }, 600); // 600ms debounce to avoid saving incomplete words
 
     return () => {
       isMounted = false;
       clearTimeout(timerId);
     };
-  }, [searchQuery]);
+  }, [searchQuery, currentUser]);
 
   const filteredDocuments = useMemo(() => {
     return documents.filter(doc => {

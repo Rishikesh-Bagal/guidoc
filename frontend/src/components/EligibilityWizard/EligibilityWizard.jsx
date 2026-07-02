@@ -3,6 +3,8 @@ import QuestionCard from './QuestionCard';
 import ProgressIndicator from './ProgressIndicator';
 import ResultCard from './ResultCard';
 import { eligibilityService } from '../../services/eligibilityService';
+import { useAuth } from '../../contexts/AuthContext';
+import { userService } from '../../services/userService';
 import './wizard.css';
 
 const DOCUMENTS = [
@@ -44,6 +46,7 @@ const EligibilityWizard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const { currentUser } = useAuth();
 
   const handleDocumentSelect = (docId) => {
     setSelectedDocument(docId);
@@ -99,6 +102,9 @@ const EligibilityWizard = () => {
     try {
       const data = await eligibilityService.checkEligibility(selectedDocument, answers);
       setResult(data);
+      if (currentUser) {
+        userService.saveEligibilityCheck(currentUser.uid, selectedDocument, data);
+      }
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {

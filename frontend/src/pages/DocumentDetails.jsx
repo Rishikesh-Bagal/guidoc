@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { documentService } from '../services/documentService';
+import { useAuth } from '../contexts/AuthContext';
+import { userService } from '../services/userService';
 import { 
   ArrowLeft, FileText, Download, ExternalLink, Clock, IndianRupee, 
   CheckCircle2, AlertTriangle, AlertCircle, Lightbulb, ChevronDown, 
-  ChevronUp, MapPin, Monitor, HelpCircle, FileCheck, Info, Building 
+  ChevronUp, MapPin, Monitor, HelpCircle, FileCheck, Info, Building,
+  Bookmark
 } from 'lucide-react';
 
 export default function DocumentDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [doc, setDoc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeProcess, setActiveProcess] = useState('online');
   const [activeFaq, setActiveFaq] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -27,6 +32,12 @@ export default function DocumentDetails() {
         if (isMounted) {
           if (data) {
             setDoc(data);
+            if (currentUser) {
+              userService.logDocumentView(currentUser.uid, data.id);
+              userService.isFavorite(currentUser.uid, data.id).then(saved => {
+                if (isMounted) setIsSaved(saved);
+              });
+            }
           } else {
             setError('Document Not Found');
           }
@@ -47,7 +58,7 @@ export default function DocumentDetails() {
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [id, currentUser]);
 
   if (loading) {
     return (
@@ -81,9 +92,53 @@ export default function DocumentDetails() {
     }
   };
 
+  const toggleSave = async () => {
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
+    try {
+      if (isSaved) {
+        await userService.removeFavorite(currentUser.uid, doc.id);
+        setIsSaved(false);
+      } else {
+        await userService.saveFavorite(currentUser.uid, doc);
+        setIsSaved(true);
+      }
+    } catch (err) {
+      console.error('Error toggling save', err);
+    }
+  };
+
   return (
     <div className="doc-details-page">
       <div className="doc-header-banner">
+        
+        <button 
+          onClick={toggleSave}
+          className="bookmark-icon-btn" 
+          title={isSaved ? "Remove from Favorites" : "Save to Favorites"}
+          style={{ 
+            position: 'absolute',
+            top: '24px',
+            right: '24px',
+            border: '1px solid',
+            borderColor: isSaved ? '#f59e0b' : 'var(--border-color)', 
+            cursor: 'pointer', 
+            color: isSaved ? '#f59e0b' : 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '10px',
+            borderRadius: '50%',
+            transition: 'all 0.2s ease',
+            backgroundColor: isSaved ? '#fef3c7' : 'rgba(248, 250, 252, 0.05)',
+            zIndex: 10
+          }}
+        >
+          <Bookmark size={24} fill={isSaved ? "currentColor" : "none"} strokeWidth={isSaved ? 0 : 2} />
+        </button>
+
         <button className="back-btn" onClick={() => navigate(-1)}>
           <ArrowLeft size={16} /> Back
         </button>
@@ -91,14 +146,17 @@ export default function DocumentDetails() {
           <div className="doc-header-icon">
              <FileText size={48} color="var(--primary-color)" />
           </div>
-          <div>
-            <div className="doc-meta">
-              <span className="doc-category-badge">{doc.category}</span>
-              {doc.tags.map(tag => (
-                <span key={tag} className="doc-tag-badge">{tag}</span>
-              ))}
+          <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div className="doc-meta">
+                <span className="doc-category-badge">{doc.category}</span>
+                {doc.tags.map(tag => (
+                  <span key={tag} className="doc-tag-badge">{tag}</span>
+                ))}
+              </div>
             </div>
-            <h1 className="doc-title">{doc.title}</h1>
+            
+            <h1 className="doc-title" style={{ paddingRight: '60px' }}>{doc.title}</h1>
             <p className="doc-subtitle">{doc.description}</p>
           </div>
         </div>
