@@ -142,10 +142,10 @@ export default function DashboardPage() {
             <h3>Ask AI Assistant</h3>
             <p>Ask document-related questions and receive AI-powered guidance.</p>
           </div>
-          <div className="action-card">
-            <Plus className="action-icon" />
-            <h3>New Application</h3>
-            <p>Start preparing for a new government document application.</p>
+          <div className="action-card" onClick={() => navigate('/tracker')} style={{cursor: 'pointer'}}>
+            <Activity className="action-icon" />
+            <h3>Track Applications</h3>
+            <p>Monitor the progress of your government document applications.</p>
           </div>
         </div>
       </section>
