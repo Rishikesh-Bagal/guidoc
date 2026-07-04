@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { FileText, Search, ShieldCheck, MessageSquare, Plus, Clock, Activity, Loader2 } from 'lucide-react';
+import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { userService } from '../services/userService';
 import './Dashboard.css';
@@ -137,10 +137,10 @@ export default function DashboardPage() {
             <h3>Check Eligibility</h3>
             <p>Get a personalized eligibility roadmap before applying.</p>
           </div>
-          <div className="action-card" onClick={() => navigate('/ai')} style={{cursor: 'pointer'}}>
-            <MessageSquare className="action-icon" />
-            <h3>Ask AI Assistant</h3>
-            <p>Ask document-related questions and receive AI-powered guidance.</p>
+          <div className="action-card" onClick={() => navigate('/profile')} style={{cursor: 'pointer'}}>
+            <User className="action-icon" />
+            <h3>My Profile</h3>
+            <p>Manage your account settings and preferences.</p>
           </div>
           <div className="action-card" onClick={() => navigate('/tracker')} style={{cursor: 'pointer'}}>
             <Activity className="action-icon" />

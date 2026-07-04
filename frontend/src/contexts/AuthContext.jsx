@@ -4,9 +4,14 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   signInWithPopup,
-  signOut
+  signOut,
+  updateProfile,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  deleteUser
 } from 'firebase/auth';
 import { auth, googleProvider } from '../config/firebase';
+import { userService } from '../services/userService';
 
 const AuthContext = createContext();
 
@@ -19,8 +24,11 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+      if (user) {
+        await userService.syncUserDocument(user);
+      }
       setLoading(false);
     });
 
@@ -43,12 +51,32 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   };
 
+  const updateUserProfile = (profileData) => {
+    return updateProfile(auth.currentUser, profileData);
+  };
+
+  const verifyEmail = () => {
+    return sendEmailVerification(auth.currentUser);
+  };
+
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  };
+
+  const deleteAccount = () => {
+    return deleteUser(auth.currentUser);
+  };
+
   const value = {
     currentUser,
     loginWithEmail,
     registerWithEmail,
     loginWithGoogle,
-    logout
+    logout,
+    updateUserProfile,
+    verifyEmail,
+    resetPassword,
+    deleteAccount
   };
 
   return (

@@ -14,6 +14,78 @@ import {
 } from 'firebase/firestore';
 
 class UserService {
+  // User Management
+  async syncUserDocument(user) {
+    if (!user) return;
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || '',
+        provider: user.providerData?.[0]?.providerId || 'password',
+        lastLogin: serverTimestamp(),
+      };
+
+      if (!userSnap.exists()) {
+        userData.createdAt = serverTimestamp();
+        userData.preferences = {
+          theme: 'dark',
+          language: 'en',
+          notifications: true
+        };
+      }
+      
+      await setDoc(userRef, userData, { merge: true });
+      console.log(`[Firestore Write Success] syncUserDocument completed`);
+    } catch (error) {
+      console.error('[Firestore Write Error] syncUserDocument failed:', error);
+    }
+  }
+
+  async updateUserPreferences(userId, preferences) {
+    if (!userId || !preferences) return;
+    try {
+      const userRef = doc(db, 'users', userId);
+      await setDoc(userRef, { preferences }, { merge: true });
+    } catch (error) {
+      console.error('Error updating user preferences:', error);
+    }
+  }
+
+  async deleteUserData(userId) {
+    if (!userId) return;
+    try {
+      // Helper function to delete documents from a query
+      const deleteFromCollection = async (collectionName, fieldName) => {
+        const q = query(collection(db, collectionName), where(fieldName, '==', userId));
+        const snapshot = await getDocs(q);
+        const deletePromises = snapshot.docs.map(document => deleteDoc(doc(db, collectionName, document.id)));
+        await Promise.all(deletePromises);
+      };
+
+      // Cascading deletes
+      await Promise.all([
+        deleteFromCollection('favorites', 'userId'),
+        deleteFromCollection('recentSearches', 'userId'),
+        deleteFromCollection('eligibilityHistory', 'userId'),
+        deleteFromCollection('aiHistory', 'userId'),
+        deleteFromCollection('applications', 'userId'), // assuming tracker uses 'applications' collection
+        deleteFromCollection('documentViews', 'userId')
+      ]);
+
+      // Finally, delete the user doc
+      await deleteDoc(doc(db, 'users', userId));
+      console.log(`[Firestore Delete Success] deleteUserData completed for ${userId}`);
+    } catch (error) {
+      console.error('Error deleting user data:', error);
+      throw error;
+    }
+  }
+
   // Favorites
   async saveFavorite(userId, document) {
     console.log(`[Firestore Write Attempt] saveFavorite called for userId: ${userId}, documentId: ${document?.id}`);

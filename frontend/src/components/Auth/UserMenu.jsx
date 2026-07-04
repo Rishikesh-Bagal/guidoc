@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { User, LogOut, LayoutDashboard } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, Activity } from 'lucide-react';
 import './UserMenu.css';
 
 export default function UserMenu() {
@@ -59,6 +59,18 @@ export default function UserMenu() {
               <Link to="/dashboard" className="user-menu-item" onClick={() => setIsOpen(false)}>
                 <LayoutDashboard size={16} />
                 Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link to="/profile" className="user-menu-item" onClick={() => setIsOpen(false)}>
+                <User size={16} />
+                My Profile
+              </Link>
+            </li>
+            <li>
+              <Link to="/tracker" className="user-menu-item" onClick={() => setIsOpen(false)}>
+                <Activity size={16} />
+                Tracker
               </Link>
             </li>
             <li>
