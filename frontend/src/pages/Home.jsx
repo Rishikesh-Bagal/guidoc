@@ -1,22 +1,23 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   return (
     <>
       {/* Hero Section */}
       <div className="hero-container">
-        <h1 className="hero-title">Navigate Government Documents Without the Confusion.</h1>
-        <p className="hero-subtitle">
-          Get clear, step-by-step guidance for your Aadhaar, PAN, Passport, and state certificates. No legal jargon, just simple steps.
-        </p>
+        <h1 className="hero-title">{t('home.heroTitle')}</h1>
+        <p className="hero-subtitle">{t('home.heroSubtitle')}</p>
         <div className="hero-actions">
           <button onClick={() => navigate('/eligibility')} className="btn-primary" style={{ fontSize: '1.05rem', padding: '14px 28px' }}>
-            Check Eligibility
+            {t('home.checkEligibility')}
           </button>
           <button className="btn-secondary" style={{ fontSize: '1.05rem', padding: '14px 28px' }}>
-            Learn How It Works
+            {t('home.learnHow')}
           </button>
         </div>
       </div>
@@ -24,8 +25,8 @@ export default function Home() {
       {/* Popular Services Section */}
       <section className="section section-gray">
         <div className="section-header">
-          <h2 className="section-title">Popular Document Services</h2>
-          <p className="section-subtitle">Select a document to view requirements, latest fees, and official application portals.</p>
+          <h2 className="section-title">{t('home.popularServicesTitle')}</h2>
+          <p className="section-subtitle">{t('home.popularServicesSubtitle')}</p>
         </div>
 
         <div className="services-grid">
@@ -35,11 +36,11 @@ export default function Home() {
             style={{ cursor: 'pointer' }}
           >
             <div className="service-icon">💳</div>
-            <h3>PAN Card</h3>
-            <p className="service-desc">New applications, corrections, or duplicate requests.</p>
+            <h3>{t('home.panCardTitle')}</h3>
+            <p className="service-desc">{t('home.panCardDesc')}</p>
             <ul className="service-tags">
-              <li>New PAN</li>
-              <li>Corrections</li>
+              <li>{t('home.newPan')}</li>
+              <li>{t('home.corrections')}</li>
             </ul>
           </div>
           <div 
@@ -48,11 +49,11 @@ export default function Home() {
             style={{ cursor: 'pointer' }}
           >
             <div className="service-icon">🛂</div>
-            <h3>Passport</h3>
-            <p className="service-desc">Fresh issuance, renewals, and Police Clearance Certificates.</p>
+            <h3>{t('home.passportTitle')}</h3>
+            <p className="service-desc">{t('home.passportDesc')}</p>
             <ul className="service-tags">
-              <li>Fresh / Renewal</li>
-              <li>PCC</li>
+              <li>{t('home.freshRenewal')}</li>
+              <li>{t('home.pcc')}</li>
             </ul>
           </div>
           <div 
@@ -61,11 +62,11 @@ export default function Home() {
             style={{ cursor: 'pointer' }}
           >
             <div className="service-icon">🆔</div>
-            <h3>Aadhaar Card</h3>
-            <p className="service-desc">Address updates, demographic changes, and PVC card orders.</p>
+            <h3>{t('home.aadhaarTitle')}</h3>
+            <p className="service-desc">{t('home.aadhaarDesc')}</p>
             <ul className="service-tags">
-              <li>Address Update</li>
-              <li>PVC Order</li>
+              <li>{t('home.addressUpdate')}</li>
+              <li>{t('home.pvcOrder')}</li>
             </ul>
           </div>
           <div 
@@ -74,11 +75,11 @@ export default function Home() {
             style={{ cursor: 'pointer' }}
           >
             <div className="service-icon">📜</div>
-            <h3>State Certificates</h3>
-            <p className="service-desc">Income, Caste, and Domicile certificates for various states.</p>
+            <h3>{t('home.stateCertsTitle')}</h3>
+            <p className="service-desc">{t('home.stateCertsDesc')}</p>
             <ul className="service-tags">
-              <li>Income</li>
-              <li>Domicile</li>
+              <li>{t('home.income')}</li>
+              <li>{t('home.domicile')}</li>
             </ul>
           </div>
         </div>
@@ -87,30 +88,30 @@ export default function Home() {
       {/* The Guided Process */}
       <section className="section">
         <div className="section-header">
-          <h2 className="section-title">How GUIDOC Helps You</h2>
-          <p className="section-subtitle">We don't just give you a link. We guide you from preparation to submission.</p>
+          <h2 className="section-title">{t('home.howHelpsTitle')}</h2>
+          <p className="section-subtitle">{t('home.howHelpsSubtitle')}</p>
         </div>
 
         <div className="process-timeline">
           <div className="process-step">
             <div className="step-number">1</div>
             <div className="step-details">
-              <h3>Tell us your situation</h3>
-              <p>For example, "I lost my PAN card and need a duplicate." We ask a few simple questions to understand your exact need.</p>
+              <h3>{t('home.step1Title')}</h3>
+              <p>{t('home.step1Desc')}</p>
             </div>
           </div>
           <div className="process-step">
             <div className="step-number">2</div>
             <div className="step-details">
-              <h3>Get your customized checklist</h3>
-              <p>We analyze current government rules and provide the exact list of valid proofs required based on your specific profile.</p>
+              <h3>{t('home.step2Title')}</h3>
+              <p>{t('home.step2Desc')}</p>
             </div>
           </div>
           <div className="process-step">
             <div className="step-number">3</div>
             <div className="step-details">
-              <h3>Follow the step-by-step roadmap</h3>
-              <p>We direct you to the official portal, tell you exactly which forms to fill, and how to book necessary appointments.</p>
+              <h3>{t('home.step3Title')}</h3>
+              <p>{t('home.step3Desc')}</p>
             </div>
           </div>
         </div>
@@ -119,34 +120,36 @@ export default function Home() {
       {/* Trust Indicators Section */}
       <section className="section section-gray">
         <div className="section-header">
-          <h2 className="section-title">Built on Trust and Accuracy</h2>
-          <p className="section-subtitle">Dealing with government documents requires precision. Here is our commitment to you.</p>
+          <h2 className="section-title">{t('home.trustTitle')}</h2>
+          <p className="section-subtitle">{t('home.trustSubtitle')}</p>
         </div>
         
         <div className="trust-grid">
           <div className="trust-card">
             <div className="trust-icon">🔄</div>
-            <h3>Always Up-to-Date</h3>
-            <p>Government rules change frequently. Our guidance updates in real-time with the latest official circulars and fee structures.</p>
+            <h3>{t('home.upToDateTitle')}</h3>
+            <p>{t('home.upToDateDesc')}</p>
           </div>
           <div className="trust-card">
             <div className="trust-icon">🔒</div>
-            <h3>Privacy First</h3>
-            <p>We don't store your sensitive documents. We guide you, but you apply directly and securely on the official government portals.</p>
+            <h3>{t('home.privacyTitle')}</h3>
+            <p>{t('home.privacyDesc')}</p>
           </div>
           <div className="trust-card">
             <div className="trust-icon">🗣️</div>
-            <h3>Zero Jargon</h3>
-            <p>We translate complex bureaucratic terms and confusing legal instructions into plain English and regional languages.</p>
+            <h3>{t('home.zeroJargonTitle')}</h3>
+            <p>{t('home.zeroJargonDesc')}</p>
           </div>
         </div>
       </section>
 
       {/* Clean CTA Section */}
       <section className="cta-clean">
-        <h2>Ready to simplify your paperwork?</h2>
-        <p>Join thousands of citizens who have successfully navigated complex documentation with GUIDOC.</p>
-        <button className="btn-primary" style={{ fontSize: '1.05rem', padding: '12px 28px', marginTop: '1.5rem' }}>Find Your Document Now</button>
+        <h2>{t('home.ctaTitle')}</h2>
+        <p>{t('home.ctaDesc')}</p>
+        <button className="btn-primary" style={{ fontSize: '1.05rem', padding: '12px 28px', marginTop: '1.5rem' }}>
+          {t('home.ctaButton')}
+        </button>
       </section>
     </>
   );

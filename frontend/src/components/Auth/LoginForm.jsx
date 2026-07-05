@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function LoginForm() {
@@ -9,6 +10,7 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const { loginWithEmail, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -18,7 +20,7 @@ export default function LoginForm() {
       await loginWithEmail(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError('Failed to log in. Please check your credentials.');
+      setError(t('auth.errorLogin'));
     }
     setLoading(false);
   }
@@ -30,18 +32,18 @@ export default function LoginForm() {
       await loginWithGoogle();
       navigate('/dashboard');
     } catch (err) {
-      setError('Failed to sign in with Google.');
+      setError(t('auth.errorGoogle'));
     }
     setLoading(false);
   }
 
   return (
     <div className="auth-form-container">
-      <h2 className="auth-title">Sign In</h2>
+      <h2 className="auth-title">{t('auth.signInTitle')}</h2>
       {error && <div className="alert alert-error">{error}</div>}
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-group">
-          <label>Email</label>
+          <label>{t('auth.emailLabel')}</label>
           <input 
             type="email" 
             required 
@@ -50,7 +52,7 @@ export default function LoginForm() {
           />
         </div>
         <div className="form-group">
-          <label>Password</label>
+          <label>{t('auth.passwordLabel')}</label>
           <input 
             type="password" 
             required 
@@ -59,19 +61,19 @@ export default function LoginForm() {
           />
         </div>
         <button disabled={loading} className="btn-primary auth-submit" type="submit">
-          Log In
+          {t('auth.loginButton')}
         </button>
       </form>
-      <div className="auth-divider">or</div>
+      <div className="auth-divider">{t('auth.or')}</div>
       <button 
         disabled={loading} 
         className="btn-secondary auth-google" 
         onClick={handleGoogleSignIn}
       >
-        Sign in with Google
+        {t('auth.googleSignIn')}
       </button>
       <div className="auth-footer">
-        Need an account? <Link to="/register">Register</Link>
+        {t('auth.needAccount')} <Link to="/register">{t('auth.registerLink')}</Link>
       </div>
     </div>
   );

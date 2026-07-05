@@ -1,0 +1,21 @@
+{
+  "auth": {
+    "signInTitle": "साइन इन करा",
+    "emailLabel": "ईमेल",
+    "passwordLabel": "पासवर्ड",
+    "confirmPasswordLabel": "पासवर्डची पुष्टी करा",
+    "loginButton": "लॉग इन करा",
+    "or": "किंवा",
+    "googleSignIn": "Google सह साइन इन करा",
+    "needAccount": "खात्याची आवश्यकता आहे?",
+    "registerLink": "नोंदणी करा",
+    "registerTitle": "नोंदणी करा",
+    "signUpButton": "साइन अप करा",
+    "haveAccount": "आधीपासूनच खाते आहे?",
+    "logInLink": "लॉग इन करा",
+    "errorLogin": "लॉग इन करण्यात अयशस्वी. कृपया तुमची क्रेडेन्शियल तपासा.",
+    "errorGoogle": "Google सह साइन इन करण्यात अयशस्वी.",
+    "errorMismatch": "पासवर्ड जुळत नाहीत",
+    "errorRegister": "खाते तयार करण्यात अयशस्वी."
+  }
+}

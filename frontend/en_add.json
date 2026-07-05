@@ -1,0 +1,21 @@
+{
+  "auth": {
+    "signInTitle": "Sign In",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "loginButton": "Log In",
+    "or": "or",
+    "googleSignIn": "Sign in with Google",
+    "needAccount": "Need an account?",
+    "registerLink": "Register",
+    "registerTitle": "Register",
+    "signUpButton": "Sign Up",
+    "haveAccount": "Already have an account?",
+    "logInLink": "Log In",
+    "errorLogin": "Failed to log in. Please check your credentials.",
+    "errorGoogle": "Failed to sign in with Google.",
+    "errorMismatch": "Passwords do not match",
+    "errorRegister": "Failed to create an account."
+  }
+}

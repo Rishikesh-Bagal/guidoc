@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function RegisterForm() {
@@ -10,11 +11,12 @@ export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const { registerWithEmail } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (password !== confirmPassword) {
-      return setError('Passwords do not match');
+      return setError(t('auth.errorMismatch'));
     }
     try {
       setError('');
@@ -22,18 +24,18 @@ export default function RegisterForm() {
       await registerWithEmail(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError('Failed to create an account.');
+      setError(t('auth.errorRegister'));
     }
     setLoading(false);
   }
 
   return (
     <div className="auth-form-container">
-      <h2 className="auth-title">Register</h2>
+      <h2 className="auth-title">{t('auth.registerTitle')}</h2>
       {error && <div className="alert alert-error">{error}</div>}
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-group">
-          <label>Email</label>
+          <label>{t('auth.emailLabel')}</label>
           <input 
             type="email" 
             required 
@@ -42,7 +44,7 @@ export default function RegisterForm() {
           />
         </div>
         <div className="form-group">
-          <label>Password</label>
+          <label>{t('auth.passwordLabel')}</label>
           <input 
             type="password" 
             required 
@@ -51,7 +53,7 @@ export default function RegisterForm() {
           />
         </div>
         <div className="form-group">
-          <label>Confirm Password</label>
+          <label>{t('auth.confirmPasswordLabel')}</label>
           <input 
             type="password" 
             required 
@@ -60,11 +62,11 @@ export default function RegisterForm() {
           />
         </div>
         <button disabled={loading} className="btn-primary auth-submit" type="submit">
-          Sign Up
+          {t('auth.signUpButton')}
         </button>
       </form>
       <div className="auth-footer">
-        Already have an account? <Link to="/login">Log In</Link>
+        {t('auth.haveAccount')} <Link to="/login">{t('auth.logInLink')}</Link>
       </div>
     </div>
   );

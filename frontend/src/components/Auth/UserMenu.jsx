@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { User, LogOut, LayoutDashboard, Activity } from 'lucide-react';
 import './UserMenu.css';
@@ -7,6 +8,7 @@ import './UserMenu.css';
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const { currentUser, logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
@@ -58,25 +60,25 @@ export default function UserMenu() {
             <li>
               <Link to="/dashboard" className="user-menu-item" onClick={() => setIsOpen(false)}>
                 <LayoutDashboard size={16} />
-                Dashboard
+                {t('userMenu.dashboard')}
               </Link>
             </li>
             <li>
               <Link to="/profile" className="user-menu-item" onClick={() => setIsOpen(false)}>
                 <User size={16} />
-                My Profile
+                {t('userMenu.myProfile')}
               </Link>
             </li>
             <li>
               <Link to="/tracker" className="user-menu-item" onClick={() => setIsOpen(false)}>
                 <Activity size={16} />
-                Tracker
+                {t('userMenu.tracker')}
               </Link>
             </li>
             <li>
               <button className="user-menu-item" onClick={handleLogout}>
                 <LogOut size={16} />
-                Logout
+                {t('userMenu.logout')}
               </button>
             </li>
           </ul>
