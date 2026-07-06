@@ -10,11 +10,26 @@ import {
   deleteDoc,
   serverTimestamp,
   getDoc,
-  onSnapshot
+  onSnapshot,
+  getCountFromServer
 } from 'firebase/firestore';
-
 class UserService {
   // User Management
+  async getUserDocument(userId) {
+    if (!userId) return null;
+    try {
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        return userSnap.data();
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching user document:', error);
+      return null;
+    }
+  }
+
   async syncUserDocument(user) {
     if (!user) return;
     try {
@@ -37,6 +52,9 @@ class UserService {
           language: 'en',
           notifications: true
         };
+        // By default, new users do not get admin role. 
+        // Admin must be assigned manually in Firestore.
+        userData.role = 'user';
       }
       
       await setDoc(userRef, userData, { merge: true });
@@ -307,6 +325,28 @@ class UserService {
     } catch (error) {
       console.error('Error getting document view count:', error);
       return 0;
+    }
+  }
+
+  // Admin Analytics
+  async getAdminStats() {
+    try {
+      const usersSnap = await getCountFromServer(collection(db, 'users'));
+      const favoritesSnap = await getCountFromServer(collection(db, 'favorites'));
+      const eligibilitySnap = await getCountFromServer(collection(db, 'eligibilityHistory'));
+      const aiSnap = await getCountFromServer(collection(db, 'aiHistory'));
+      const viewsSnap = await getCountFromServer(collection(db, 'documentViews'));
+
+      return {
+        totalUsers: usersSnap.data().count,
+        totalFavorites: favoritesSnap.data().count,
+        totalEligibilityChecks: eligibilitySnap.data().count,
+        totalAiInteractions: aiSnap.data().count,
+        totalViews: viewsSnap.data().count
+      };
+    } catch (error) {
+      console.error('Error fetching admin stats:', error);
+      return { totalUsers: 0, totalFavorites: 0, totalEligibilityChecks: 0, totalAiInteractions: 0, totalViews: 0 };
     }
   }
 }

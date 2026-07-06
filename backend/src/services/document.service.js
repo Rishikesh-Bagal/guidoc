@@ -1,14 +1,15 @@
 const Document = require('../models/Document');
 
 /**
- * Get all active documents with pagination and sorting
+ * Get all documents with pagination and sorting
  * @param {Object} options
  * @param {number} options.page
  * @param {number} options.limit
+ * @param {boolean} options.includeInactive
  * @returns {Promise<Object>}
  */
-const getDocuments = async ({ page = 1, limit = 10 }) => {
-  const query = { isActive: true };
+const getDocuments = async ({ page = 1, limit = 10, includeInactive = false }) => {
+  const query = includeInactive ? {} : { isActive: true };
   const skip = (page - 1) * limit;
 
   const [documents, totalDocuments] = await Promise.all([
@@ -46,17 +47,20 @@ const getDocumentBySlug = async (slug) => {
  * @param {number} options.limit
  * @returns {Promise<Object>}
  */
-const searchDocuments = async (keyword, { page = 1, limit = 10 }) => {
+const searchDocuments = async (keyword, { page = 1, limit = 10, includeInactive = false }) => {
   const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(escapedKeyword, 'i');
   const query = {
-    isActive: true,
     $or: [
       { name: { $regex: regex } },
       { category: { $regex: regex } },
       { description: { $regex: regex } }
     ]
   };
+  if (!includeInactive) {
+    query.isActive = true;
+  }
+  
   const skip = (page - 1) * limit;
 
   const [documents, totalDocuments] = await Promise.all([
@@ -76,8 +80,33 @@ const searchDocuments = async (keyword, { page = 1, limit = 10 }) => {
   };
 };
 
+/**
+ * Create a new document
+ */
+const createDocument = async (data) => {
+  const document = new Document(data);
+  return await document.save();
+};
+
+/**
+ * Update an existing document
+ */
+const updateDocument = async (id, data) => {
+  return await Document.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+};
+
+/**
+ * Delete a document
+ */
+const deleteDocument = async (id) => {
+  return await Document.findByIdAndDelete(id);
+};
+
 module.exports = {
   getDocuments,
   getDocumentBySlug,
-  searchDocuments
+  searchDocuments,
+  createDocument,
+  updateDocument,
+  deleteDocument
 };

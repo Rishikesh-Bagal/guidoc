@@ -21,6 +21,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,13 +29,16 @@ export function AuthProvider({ children }) {
       setCurrentUser(user);
       if (user) {
         await userService.syncUserDocument(user);
+        const userData = await userService.getUserDocument(user.uid);
+        setUserRole(userData?.role || 'user');
+      } else {
+        setUserRole(null);
       }
       setLoading(false);
     });
 
     return unsubscribe;
   }, []);
-
   const loginWithEmail = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
@@ -69,6 +73,8 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    userRole,
+    isAdmin: userRole === 'admin',
     loginWithEmail,
     registerWithEmail,
     loginWithGoogle,
@@ -78,7 +84,6 @@ export function AuthProvider({ children }) {
     resetPassword,
     deleteAccount
   };
-
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
