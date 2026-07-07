@@ -4,6 +4,8 @@ import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2 } f
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { userService } from '../services/userService';
+import SEO from '../components/common/SEO';
+import SkeletonLoader from '../components/common/SkeletonLoader';
 import './Dashboard.css';
 
 export default function DashboardPage() {
@@ -103,7 +105,8 @@ export default function DashboardPage() {
   const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || t('dashboard.defaultUser');
 
   return (
-    <div className="dashboard-container">
+    <main className="dashboard-container">
+      <SEO title="Dashboard | GUIDOC" description="Your personal dashboard to track and manage documents." />
       <header className="dashboard-header">
         <h1>{t('dashboard.welcomeBack', { name: displayName })}</h1>
         <p>{t('dashboard.subtitle')}</p>
@@ -111,19 +114,19 @@ export default function DashboardPage() {
 
       <section className="dashboard-stats">
         <div className="stat-card">
-          <span className="stat-value">{loading ? '-' : stats.documentsViewed}</span>
+          <span className="stat-value">{loading ? <SkeletonLoader width="40px" height="32px" /> : stats.documentsViewed}</span>
           <span className="stat-label">{t('dashboard.documentsViewed')}</span>
         </div>
         <div className="stat-card">
-          <span className="stat-value">{loading ? '-' : stats.eligibilityChecks}</span>
+          <span className="stat-value">{loading ? <SkeletonLoader width="40px" height="32px" /> : stats.eligibilityChecks}</span>
           <span className="stat-label">{t('dashboard.eligibilityChecks')}</span>
         </div>
         <div className="stat-card">
-          <span className="stat-value">{loading ? '-' : stats.savedGuides}</span>
+          <span className="stat-value">{loading ? <SkeletonLoader width="40px" height="32px" /> : stats.savedGuides}</span>
           <span className="stat-label">{t('dashboard.savedGuides')}</span>
         </div>
         <div className="stat-card">
-          <span className="stat-value">{loading ? '-' : stats.aiConversations}</span>
+          <span className="stat-value">{loading ? <SkeletonLoader width="40px" height="32px" /> : stats.aiConversations}</span>
           <span className="stat-label">{t('dashboard.aiConversations')}</span>
         </div>
       </section>
@@ -161,9 +164,8 @@ export default function DashboardPage() {
             <Clock className="panel-icon" size={20} />
           </div>
           {loading ? (
-            <div className="panel-loading">
-              <Loader2 className="spin-icon" size={24} />
-              <p>{t('dashboard.loadingSearches')}</p>
+            <div className="panel-loading" style={{ padding: '20px' }}>
+              <SkeletonLoader type="text" count={3} height="40px" />
             </div>
           ) : recentSearches.length > 0 ? (
             <ul className="panel-list">
@@ -187,9 +189,8 @@ export default function DashboardPage() {
             <FileText className="panel-icon" size={20} />
           </div>
           {loading ? (
-            <div className="panel-loading">
-              <Loader2 className="spin-icon" size={24} />
-              <p>{t('dashboard.loadingDocuments')}</p>
+            <div className="panel-loading" style={{ padding: '20px' }}>
+              <SkeletonLoader type="text" count={3} height="40px" />
             </div>
           ) : savedDocuments.length > 0 ? (
             <ul className="panel-list">
@@ -207,6 +208,6 @@ export default function DashboardPage() {
           )}
         </section>
       </div>
-    </div>
+    </main>
   );
 }
