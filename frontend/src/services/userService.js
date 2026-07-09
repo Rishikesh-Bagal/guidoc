@@ -58,7 +58,6 @@ class UserService {
       }
       
       await setDoc(userRef, userData, { merge: true });
-      console.log(`[Firestore Write Success] syncUserDocument completed`);
     } catch (error) {
       console.error('[Firestore Write Error] syncUserDocument failed:', error);
     }
@@ -97,7 +96,6 @@ class UserService {
 
       // Finally, delete the user doc
       await deleteDoc(doc(db, 'users', userId));
-      console.log(`[Firestore Delete Success] deleteUserData completed for ${userId}`);
     } catch (error) {
       console.error('Error deleting user data:', error);
       throw error;
@@ -106,7 +104,6 @@ class UserService {
 
   // Favorites
   async saveFavorite(userId, document) {
-    console.log(`[Firestore Write Attempt] saveFavorite called for userId: ${userId}, documentId: ${document?.id}`);
     if (!userId || !document) {
       console.warn('[Firestore Write Error] Missing userId or document');
       return;
@@ -120,16 +117,13 @@ class UserService {
         category: document.category || 'General',
         savedAt: serverTimestamp()
       };
-      console.log(`[Firestore Write Attempt] Payload:`, payload);
       await setDoc(favRef, payload);
-      console.log(`[Firestore Write Success] saveFavorite completed successfully`);
     } catch (error) {
       console.error('[Firestore Write Error] saveFavorite failed:', error.message, error);
     }
   }
 
   async removeFavorite(userId, documentId) {
-    console.log(`[Firestore Write Attempt] removeFavorite called for userId: ${userId}, documentId: ${documentId}`);
     if (!userId || !documentId) {
       console.warn('[Firestore Write Error] Missing userId or documentId');
       return;
@@ -137,7 +131,6 @@ class UserService {
     try {
       const favRef = doc(db, 'favorites', `${userId}_${documentId}`);
       await deleteDoc(favRef);
-      console.log(`[Firestore Write Success] removeFavorite completed successfully`);
     } catch (error) {
       console.error('[Firestore Write Error] removeFavorite failed:', error.message, error);
     }
@@ -189,7 +182,6 @@ class UserService {
 
   // Recent Searches
   async saveSearch(userId, searchQuery) {
-    console.log(`[Firestore Write Attempt] saveSearch called for userId: ${userId}, query: ${searchQuery}`);
     if (!userId || !searchQuery) return;
     try {
       const payload = {
@@ -197,9 +189,7 @@ class UserService {
         query: searchQuery || '',
         searchedAt: serverTimestamp()
       };
-      console.log(`[Firestore Write Attempt] Payload:`, payload);
       await addDoc(collection(db, 'recentSearches'), payload);
-      console.log(`[Firestore Write Success] saveSearch completed successfully`);
     } catch (error) {
       console.error('[Firestore Write Error] saveSearch failed:', error.message, error);
     }
@@ -224,7 +214,6 @@ class UserService {
 
   // Eligibility History
   async saveEligibilityCheck(userId, documentId, result) {
-    console.log(`[Firestore Write Attempt] saveEligibilityCheck for userId: ${userId}, documentId: ${documentId}`);
     if (!userId) return;
     try {
       const payload = {
@@ -233,9 +222,7 @@ class UserService {
         isEligible: result?.eligible ?? false,
         checkedAt: serverTimestamp()
       };
-      console.log(`[Firestore Write Attempt] Payload:`, payload);
       await addDoc(collection(db, 'eligibilityHistory'), payload);
-      console.log(`[Firestore Write Success] saveEligibilityCheck completed successfully`);
     } catch (error) {
       console.error('[Firestore Write Error] saveEligibilityCheck failed:', error.message, error);
     }
@@ -260,7 +247,6 @@ class UserService {
 
   // AI Chat History
   async saveAIChatMessage(userId, userMessage, aiReply) {
-    console.log(`[Firestore Write Attempt] saveAIChatMessage for userId: ${userId}`);
     if (!userId) return;
     try {
       const payload = {
@@ -269,9 +255,7 @@ class UserService {
         aiReply: aiReply || '',
         timestamp: serverTimestamp()
       };
-      console.log(`[Firestore Write Attempt] Payload:`, payload);
       await addDoc(collection(db, 'aiHistory'), payload);
-      console.log(`[Firestore Write Success] saveAIChatMessage completed successfully`);
     } catch (error) {
       console.error('[Firestore Write Error] saveAIChatMessage failed:', error.message, error);
     }
@@ -296,7 +280,6 @@ class UserService {
 
   // Document Views (for stats)
   async logDocumentView(userId, documentId) {
-    console.log(`[Firestore Write Attempt] logDocumentView for userId: ${userId}, documentId: ${documentId}`);
     if (!userId || !documentId) return;
     try {
       const viewRef = doc(db, 'documentViews', `${userId}_${documentId}`);
@@ -307,7 +290,6 @@ class UserService {
       };
       // Not logging full payload to avoid spam, just success/error
       await setDoc(viewRef, payload);
-      console.log(`[Firestore Write Success] logDocumentView completed successfully`);
     } catch (error) {
       console.error('[Firestore Write Error] logDocumentView failed:', error.message, error);
     }

@@ -29,13 +29,21 @@ const getDocuments = async ({ page = 1, limit = 10, includeInactive = false }) =
   };
 };
 
+const mongoose = require('mongoose');
+
 /**
- * Get a single active document by slug
- * @param {string} slug 
+ * Get a single active document by slug or ID
+ * @param {string} identifier 
  * @returns {Promise<Object>}
  */
-const getDocumentBySlug = async (slug) => {
-  const document = await Document.findOne({ slug, isActive: true }).lean();
+const getDocumentBySlug = async (identifier) => {
+  let query = { isActive: true };
+  if (mongoose.Types.ObjectId.isValid(identifier)) {
+    query.$or = [{ _id: identifier }, { slug: identifier }];
+  } else {
+    query.slug = identifier;
+  }
+  const document = await Document.findOne(query).lean();
   return document;
 };
 
