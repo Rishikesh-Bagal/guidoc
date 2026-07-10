@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2 } from 'lucide-react';
+import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { userService } from '../services/userService';
@@ -153,6 +153,11 @@ export default function DashboardPage() {
             <Activity className="action-icon" />
             <h3>{t('dashboard.trackApplications')}</h3>
             <p>{t('dashboard.trackApplicationsDesc')}</p>
+          </div>
+          <div className="action-card" onClick={() => navigate('/scanner')} style={{cursor: 'pointer'}}>
+            <ScanLine className="action-icon" />
+            <h3>AI Document Scanner</h3>
+            <p>Extract details from documents</p>
           </div>
         </div>
       </section>

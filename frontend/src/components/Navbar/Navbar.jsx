@@ -23,6 +23,9 @@ export default function Navbar() {
             <Link to="/search" className="nav-links">{t('navbar.documents')}</Link>
           </li>
           <li className="nav-item">
+            <Link to="/scanner" className="nav-links">Scanner</Link>
+          </li>
+          <li className="nav-item">
             <Link to="/" className="nav-links">{t('navbar.about')}</Link>
           </li>
         </ul>
