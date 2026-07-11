@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine } from 'lucide-react';
+import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine, Mic } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { userService } from '../services/userService';
@@ -158,6 +158,11 @@ export default function DashboardPage() {
             <ScanLine className="action-icon" />
             <h3>AI Document Scanner</h3>
             <p>Extract details from documents</p>
+          </div>
+          <div className="action-card" onClick={() => navigate('/voice-assistant')} style={{cursor: 'pointer'}}>
+            <Mic className="action-icon" />
+            <h3>Voice Assistant</h3>
+            <p>Interact with GUIDOC using voice</p>
           </div>
         </div>
       </section>

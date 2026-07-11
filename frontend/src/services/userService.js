@@ -90,6 +90,7 @@ class UserService {
         deleteFromCollection('recentSearches', 'userId'),
         deleteFromCollection('eligibilityHistory', 'userId'),
         deleteFromCollection('aiHistory', 'userId'),
+        deleteFromCollection('voiceHistory', 'userId'),
         deleteFromCollection('applications', 'userId'), // assuming tracker uses 'applications' collection
         deleteFromCollection('documentViews', 'userId')
       ]);
@@ -274,6 +275,40 @@ class UserService {
       return history.slice(0, 20);
     } catch (error) {
       console.error('Error getting AI chat history:', error);
+      return [];
+    }
+  }
+
+  // Voice Chat History
+  async saveVoiceChatMessage(userId, queryText, responseText, language = 'en-US') {
+    if (!userId) return;
+    try {
+      const payload = {
+        userId: userId,
+        query: queryText || '',
+        response: responseText || '',
+        language: language,
+        createdAt: serverTimestamp()
+      };
+      await addDoc(collection(db, 'voiceHistory'), payload);
+    } catch (error) {
+      console.error('[Firestore Write Error] saveVoiceChatMessage failed:', error.message, error);
+    }
+  }
+
+  async getVoiceChatHistory(userId) {
+    if (!userId) return [];
+    try {
+      const q = query(
+        collection(db, 'voiceHistory'),
+        where('userId', '==', userId)
+      );
+      const querySnapshot = await getDocs(q);
+      const history = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      history.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+      return history.slice(0, 50); // Get more history for voice
+    } catch (error) {
+      console.error('Error getting voice chat history:', error);
       return [];
     }
   }

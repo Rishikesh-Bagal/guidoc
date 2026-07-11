@@ -18,6 +18,7 @@ const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 const TrackerPage = lazy(() => import('../pages/TrackerPage'));
 const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 const ScannerPage = lazy(() => import('../pages/ScannerPage'));
+const VoiceAssistant = lazy(() => import('../pages/VoiceAssistant'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 
 // Lazy loaded admin pages
@@ -44,6 +45,7 @@ export default function AppRoutes() {
                 <Route path="/tracker" element={<TrackerPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/scanner" element={<ScannerPage />} />
+                <Route path="/voice-assistant" element={<VoiceAssistant />} />
               </Route>
               
               <Route path="*" element={<NotFound />} />
