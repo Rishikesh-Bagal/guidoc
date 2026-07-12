@@ -20,6 +20,8 @@ const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 const ScannerPage = lazy(() => import('../pages/ScannerPage'));
 const VoiceAssistant = lazy(() => import('../pages/VoiceAssistant'));
 const NotFound = lazy(() => import('../pages/NotFound'));
+const OfficeLocatorPage = lazy(() => import('../pages/OfficeLocatorPage'));
+const OfficeDetailsPage = lazy(() => import('../pages/OfficeDetailsPage'));
 
 // Lazy loaded admin pages
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
@@ -46,6 +48,8 @@ export default function AppRoutes() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/scanner" element={<ScannerPage />} />
                 <Route path="/voice-assistant" element={<VoiceAssistant />} />
+                <Route path="/office-locator" element={<OfficeLocatorPage />} />
+                <Route path="/office/:id" element={<OfficeDetailsPage />} />
               </Route>
               
               <Route path="*" element={<NotFound />} />

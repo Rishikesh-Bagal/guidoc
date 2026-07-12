@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine, Mic } from 'lucide-react';
+import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine, Mic, MapPin, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { userService } from '../services/userService';
+import { officeService } from '../services/officeService';
 import SEO from '../components/common/SEO';
 import SkeletonLoader from '../components/common/SkeletonLoader';
 import './Dashboard.css';
@@ -22,6 +23,7 @@ export default function DashboardPage() {
   });
   const [recentSearches, setRecentSearches] = useState([]);
   const [savedDocuments, setSavedDocuments] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -38,16 +40,19 @@ export default function DashboardPage() {
           searches,
           eligibilityHistory,
           aiHistory,
-          docViewCount
+          docViewCount,
+          userAppointments
         ] = await Promise.all([
           userService.getRecentSearches(userId),
           userService.getEligibilityHistory(userId),
           userService.getAIChatHistory(userId),
-          userService.getDocumentViewCount(userId)
+          userService.getDocumentViewCount(userId),
+          officeService.getUserAppointments(userId)
         ]);
 
         if (isMounted) {
           setRecentSearches(searches);
+          setAppointments(userAppointments);
           
           setStats(prev => ({
             ...prev,
@@ -164,6 +169,11 @@ export default function DashboardPage() {
             <h3>Voice Assistant</h3>
             <p>Interact with GUIDOC using voice</p>
           </div>
+          <div className="action-card" onClick={() => navigate('/office-locator')} style={{cursor: 'pointer'}}>
+            <MapPin className="action-icon" />
+            <h3>Office Locator</h3>
+            <p>Find offices and book appointments</p>
+          </div>
         </div>
       </section>
 
@@ -214,6 +224,37 @@ export default function DashboardPage() {
           ) : (
             <div className="panel-empty">
                <p>{t('dashboard.noSavedDocuments')}</p>
+             </div>
+          )}
+        </section>
+
+        <section className="dashboard-panel">
+          <div className="panel-header">
+            <h2>Upcoming Appointments</h2>
+            <Calendar className="panel-icon" size={20} />
+          </div>
+          {loading ? (
+            <div className="panel-loading" style={{ padding: '20px' }}>
+              <SkeletonLoader type="text" count={3} height="40px" />
+            </div>
+          ) : appointments.length > 0 ? (
+            <ul className="panel-list">
+              {appointments.slice(0, 3).map((apt) => (
+                <li key={apt.id} className="panel-list-item" onClick={() => navigate('/profile')} style={{cursor: 'pointer'}}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <span className="item-title">{apt.officeName}</span>
+                    <span className="item-meta">{apt.service}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
+                    <span className="item-badge">{apt.status}</span>
+                    <span className="item-meta" style={{ fontSize: '0.75rem' }}>{apt.appointmentDate} {apt.appointmentTime}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="panel-empty">
+               <p>No upcoming appointments</p>
              </div>
           )}
         </section>

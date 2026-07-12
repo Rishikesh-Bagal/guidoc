@@ -26,6 +26,11 @@ export default function Navbar() {
           <li className="nav-item">
             <Link to="/scanner" className="nav-links">Scanner</Link>
           </li>
+          {currentUser && (
+            <li className="nav-item">
+              <Link to="/office-locator" className="nav-links">Office Locator</Link>
+            </li>
+          )}
           <li className="nav-item">
             <Link to="/" className="nav-links">{t('navbar.about')}</Link>
           </li>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../services/userService';
-import { User, Mail, Shield, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Trash2 } from 'lucide-react';
+import { User, Mail, Shield, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Trash2, MapPin } from 'lucide-react';
+import { officeService } from '../services/officeService';
+import { Link } from 'react-router-dom';
 import './Profile.css';
 
 export default function ProfilePage() {
@@ -12,12 +14,34 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     if (currentUser) {
       setDisplayName(currentUser.displayName || '');
+      fetchAppointments();
     }
   }, [currentUser]);
+
+  const fetchAppointments = async () => {
+    try {
+      const apts = await officeService.getUserAppointments(currentUser.uid);
+      setAppointments(apts);
+    } catch (error) {
+      console.error('Failed to fetch appointments', error);
+    }
+  };
+
+  const handleCancelAppointment = async (appointmentId) => {
+    if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
+    try {
+      await officeService.cancelAppointment(appointmentId);
+      setAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
+      showMessage('success', 'Appointment cancelled successfully.');
+    } catch (error) {
+      showMessage('error', 'Failed to cancel appointment.');
+    }
+  };
 
   if (!currentUser) return null;
 
@@ -216,7 +240,44 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        <section className="profile-card" style={{ border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+        <section className="profile-card" style={{ gridColumn: '1 / -1' }}>
+          <div className="profile-card-header">
+            <Calendar className="profile-icon" size={24} />
+            <h2>My Appointments</h2>
+          </div>
+          
+          {appointments.length > 0 ? (
+            <div className="appointments-list">
+              {appointments.map(apt => (
+                <div key={apt.id} className="appointment-item" style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', marginBottom: '1rem'
+                }}>
+                  <div>
+                    <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.1rem' }}>{apt.officeName}</h3>
+                    <p style={{ margin: '0 0 0.5rem 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{apt.service}</p>
+                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Clock size={14} /> {apt.appointmentDate} {apt.appointmentTime}</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><MapPin size={14} /> {apt.status}</span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Link to={`/office/${apt.officeId}`} className="btn-outline" style={{ padding: '0.5rem 1rem', textDecoration: 'none' }}>
+                      View Details
+                    </Link>
+                    <button className="btn-danger" style={{ padding: '0.5rem 1rem' }} onClick={() => handleCancelAppointment(apt.id)}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: 'var(--text-secondary)' }}>You have no upcoming appointments.</p>
+          )}
+        </section>
+
+        <section className="profile-card" style={{ border: '1px solid rgba(239, 68, 68, 0.3)', gridColumn: '1 / -1' }}>
           <div className="profile-card-header" style={{ borderBottomColor: 'rgba(239, 68, 68, 0.1)' }}>
             <AlertTriangle className="profile-icon" size={24} color="#ef4444" />
             <h2 style={{ color: '#ef4444' }}>Danger Zone</h2>
