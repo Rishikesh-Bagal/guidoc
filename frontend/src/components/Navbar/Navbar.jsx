@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import UserMenu from '../Auth/UserMenu';
 import LanguageSwitcher from './LanguageSwitcher';
+import NotificationDropdown from './NotificationDropdown';
 import { Mic } from 'lucide-react';
 
 export default function Navbar() {
@@ -37,6 +38,9 @@ export default function Navbar() {
         </ul>
         <div className="nav-actions flex items-center gap-4">
           <LanguageSwitcher />
+          {currentUser && (
+            <NotificationDropdown />
+          )}
           {currentUser && (
             <Link to="/voice-assistant" className="nav-icon-link" aria-label="Voice Assistant" style={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
               <Mic size={20} />

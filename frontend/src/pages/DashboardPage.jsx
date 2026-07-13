@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine, Mic, MapPin, Calendar } from 'lucide-react';
+import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine, Mic, MapPin, Calendar, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { userService } from '../services/userService';
 import { officeService } from '../services/officeService';
+import { useNotification } from '../contexts/NotificationContext';
 import SEO from '../components/common/SEO';
 import SkeletonLoader from '../components/common/SkeletonLoader';
 import './Dashboard.css';
@@ -13,6 +14,7 @@ export default function DashboardPage() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { notifications } = useNotification();
   
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -255,6 +257,32 @@ export default function DashboardPage() {
           ) : (
             <div className="panel-empty">
                <p>No upcoming appointments</p>
+             </div>
+          )}
+        </section>
+
+        <section className="dashboard-panel">
+          <div className="panel-header">
+            <h2>Recent Notifications</h2>
+            <Bell className="panel-icon" size={20} />
+          </div>
+          {notifications.length > 0 ? (
+            <ul className="panel-list">
+              {notifications.slice(0, 3).map((notif) => (
+                <li key={notif.id} className={`panel-list-item ${!notif.isRead ? 'unread' : ''}`} onClick={() => navigate('/notifications')} style={{cursor: 'pointer', backgroundColor: !notif.isRead ? 'rgba(99, 102, 241, 0.05)' : 'transparent'}}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
+                    <span className="item-title">{notif.title}</span>
+                    <span className="item-meta" style={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{notif.message}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
+                    {!notif.isRead && <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--primary-color)' }}></span>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="panel-empty">
+               <p>No recent notifications</p>
              </div>
           )}
         </section>

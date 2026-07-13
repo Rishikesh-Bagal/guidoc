@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../services/userService';
-import { User, Mail, Shield, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Trash2, MapPin } from 'lucide-react';
+import { User, Mail, Shield, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Trash2, MapPin, Bell } from 'lucide-react';
 import { officeService } from '../services/officeService';
 import { Link } from 'react-router-dom';
 import './Profile.css';
@@ -15,11 +15,20 @@ export default function ProfilePage() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appointments, setAppointments] = useState([]);
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    email: true,
+    inApp: true,
+    appointmentReminders: true,
+    aiSuggestions: true,
+    systemUpdates: true
+  });
+  const [isSavingPrefs, setIsSavingPrefs] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
       setDisplayName(currentUser.displayName || '');
       fetchAppointments();
+      fetchPreferences();
     }
   }, [currentUser]);
 
@@ -29,6 +38,45 @@ export default function ProfilePage() {
       setAppointments(apts);
     } catch (error) {
       console.error('Failed to fetch appointments', error);
+    }
+  };
+
+  const fetchPreferences = async () => {
+    try {
+      const userDoc = await userService.getUserDocument(currentUser.uid);
+      if (userDoc?.preferences?.notifications) {
+        // Merge fetched prefs with defaults
+        setNotificationPrefs(prev => ({
+          ...prev,
+          ...(typeof userDoc.preferences.notifications === 'object' 
+              ? userDoc.preferences.notifications 
+              : { inApp: userDoc.preferences.notifications, email: userDoc.preferences.notifications })
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch user preferences', error);
+    }
+  };
+
+  const handlePrefChange = async (key) => {
+    const newPrefs = { ...notificationPrefs, [key]: !notificationPrefs[key] };
+    setNotificationPrefs(newPrefs);
+    setIsSavingPrefs(true);
+    
+    try {
+      const userDoc = await userService.getUserDocument(currentUser.uid);
+      const currentPrefs = userDoc?.preferences || {};
+      await userService.updateUserPreferences(currentUser.uid, {
+        ...currentPrefs,
+        notifications: newPrefs
+      });
+      showMessage('success', 'Notification settings updated.');
+    } catch (error) {
+      showMessage('error', 'Failed to update notification settings.');
+      // Revert on failure
+      setNotificationPrefs(notificationPrefs);
+    } finally {
+      setIsSavingPrefs(false);
     }
   };
 
@@ -275,6 +323,80 @@ export default function ProfilePage() {
           ) : (
             <p style={{ color: 'var(--text-secondary)' }}>You have no upcoming appointments.</p>
           )}
+        </section>
+
+        <section className="profile-card" style={{ gridColumn: '1 / -1' }}>
+          <div className="profile-card-header">
+            <Bell className="profile-icon" size={24} />
+            <h2>Notification Settings</h2>
+          </div>
+          
+          <div className="settings-grid" style={{ display: 'grid', gap: '1rem' }}>
+            <div className="setting-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1rem' }}>In-App Notifications</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Receive notifications within the application</p>
+              </div>
+              <label className="toggle-switch" style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
+                <input type="checkbox" checked={notificationPrefs.inApp} onChange={() => handlePrefChange('inApp')} disabled={isSavingPrefs} style={{ opacity: 0, width: 0, height: 0 }} />
+                <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: notificationPrefs.inApp ? 'var(--primary-color)' : '#ccc', transition: '.4s', borderRadius: '34px' }}>
+                  <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: notificationPrefs.inApp ? '24px' : '4px', bottom: '4px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+                </span>
+              </label>
+            </div>
+
+            <div className="setting-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1rem' }}>Email Notifications</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Receive important updates via email</p>
+              </div>
+              <label className="toggle-switch" style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
+                <input type="checkbox" checked={notificationPrefs.email} onChange={() => handlePrefChange('email')} disabled={isSavingPrefs} style={{ opacity: 0, width: 0, height: 0 }} />
+                <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: notificationPrefs.email ? 'var(--primary-color)' : '#ccc', transition: '.4s', borderRadius: '34px' }}>
+                  <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: notificationPrefs.email ? '24px' : '4px', bottom: '4px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+                </span>
+              </label>
+            </div>
+
+            <div className="setting-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1rem' }}>Appointment Reminders</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Get reminded before your upcoming appointments</p>
+              </div>
+              <label className="toggle-switch" style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
+                <input type="checkbox" checked={notificationPrefs.appointmentReminders} onChange={() => handlePrefChange('appointmentReminders')} disabled={isSavingPrefs || (!notificationPrefs.email && !notificationPrefs.inApp)} style={{ opacity: 0, width: 0, height: 0 }} />
+                <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: notificationPrefs.appointmentReminders ? 'var(--primary-color)' : '#ccc', transition: '.4s', borderRadius: '34px' }}>
+                  <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: notificationPrefs.appointmentReminders ? '24px' : '4px', bottom: '4px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+                </span>
+              </label>
+            </div>
+
+            <div className="setting-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1rem' }}>AI Suggestions</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Receive smart recommendations for documents</p>
+              </div>
+              <label className="toggle-switch" style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
+                <input type="checkbox" checked={notificationPrefs.aiSuggestions} onChange={() => handlePrefChange('aiSuggestions')} disabled={isSavingPrefs || (!notificationPrefs.email && !notificationPrefs.inApp)} style={{ opacity: 0, width: 0, height: 0 }} />
+                <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: notificationPrefs.aiSuggestions ? 'var(--primary-color)' : '#ccc', transition: '.4s', borderRadius: '34px' }}>
+                  <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: notificationPrefs.aiSuggestions ? '24px' : '4px', bottom: '4px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+                </span>
+              </label>
+            </div>
+            
+            <div className="setting-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1rem' }}>System Updates</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Receive updates about platform changes and new features</p>
+              </div>
+              <label className="toggle-switch" style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
+                <input type="checkbox" checked={notificationPrefs.systemUpdates} onChange={() => handlePrefChange('systemUpdates')} disabled={isSavingPrefs || (!notificationPrefs.email && !notificationPrefs.inApp)} style={{ opacity: 0, width: 0, height: 0 }} />
+                <span className="slider" style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: notificationPrefs.systemUpdates ? 'var(--primary-color)' : '#ccc', transition: '.4s', borderRadius: '34px' }}>
+                  <span style={{ position: 'absolute', content: '""', height: '16px', width: '16px', left: notificationPrefs.systemUpdates ? '24px' : '4px', bottom: '4px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+                </span>
+              </label>
+            </div>
+          </div>
         </section>
 
         <section className="profile-card" style={{ border: '1px solid rgba(239, 68, 68, 0.3)', gridColumn: '1 / -1' }}>
