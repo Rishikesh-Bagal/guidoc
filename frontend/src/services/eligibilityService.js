@@ -23,7 +23,7 @@ export const eligibilityService = {
       return response.data.data;
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
-        throw new Error(error.response.data.error);
+        throw new Error(error.response.data.error, { cause: error });
       }
       throw error;
     }

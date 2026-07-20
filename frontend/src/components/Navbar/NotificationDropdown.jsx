@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Bell, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useNotification } from '../../contexts/NotificationContext';

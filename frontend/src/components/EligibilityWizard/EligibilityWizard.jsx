@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import QuestionCard from './QuestionCard';
 import ProgressIndicator from './ProgressIndicator';
 import ResultCard from './ResultCard';

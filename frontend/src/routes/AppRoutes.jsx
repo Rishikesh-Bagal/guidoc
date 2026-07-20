@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import AdminLayout from '../layouts/AdminLayout';
@@ -23,6 +23,7 @@ const NotFound = lazy(() => import('../pages/NotFound'));
 const OfficeLocatorPage = lazy(() => import('../pages/OfficeLocatorPage'));
 const OfficeDetailsPage = lazy(() => import('../pages/OfficeDetailsPage'));
 const NotificationsPage = lazy(() => import('../pages/NotificationsPage'));
+const MyDocumentsPage = lazy(() => import('../pages/MyDocumentsPage'));
 
 // Lazy loaded admin pages
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
@@ -52,6 +53,7 @@ export default function AppRoutes() {
                 <Route path="/office-locator" element={<OfficeLocatorPage />} />
                 <Route path="/office/:id" element={<OfficeDetailsPage />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/my-documents" element={<MyDocumentsPage />} />
               </Route>
               
               <Route path="*" element={<NotFound />} />

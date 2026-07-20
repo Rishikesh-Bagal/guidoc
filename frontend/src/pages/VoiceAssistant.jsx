@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mic, MicOff, Volume2, VolumeX, Square, RotateCcw } from 'lucide-react';
 import axios from 'axios';
@@ -225,7 +225,7 @@ const VoiceAssistant = () => {
     synthRef.current.speak(utterance);
   }, [language, isMuted]);
 
-  const handleVoiceCommand = (transcript) => {
+  function handleVoiceCommand(transcript) {
     const lower = transcript.toLowerCase();
     let handled = false;
     
@@ -263,7 +263,7 @@ const VoiceAssistant = () => {
     return handled;
   };
 
-  const handleUserSpeech = async (transcript) => {
+  async function handleUserSpeech(transcript) {
     setStatusText('Processing...');
     const userMsg = { role: 'user', content: transcript };
     setMessages(prev => [...prev, userMsg]);

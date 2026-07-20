@@ -1,4 +1,3 @@
-import React from 'react';
 import './wizard.css';
 
 const ProgressIndicator = ({ currentStep, totalSteps }) => {

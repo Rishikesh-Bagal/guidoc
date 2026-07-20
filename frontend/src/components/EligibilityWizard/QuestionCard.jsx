@@ -1,4 +1,3 @@
-import React from 'react';
 import './wizard.css';
 
 const QuestionCard = ({ question, options, answer, onAnswer, type = 'radio' }) => {

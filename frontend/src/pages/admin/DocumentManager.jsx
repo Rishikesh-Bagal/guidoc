@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { documentService } from '../../services/documentService';
 import './DocumentManager.css';
@@ -10,11 +10,7 @@ export default function DocumentManager() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchDocuments();
-  }, [page, searchQuery]);
-
-  const fetchDocuments = async () => {
+  const fetchDocuments = useCallback(async () => {
     try {
       setLoading(true);
       const res = await documentService.getAdminDocuments(page, 10, searchQuery);
@@ -25,7 +21,12 @@ export default function DocumentManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, searchQuery]);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
+
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);

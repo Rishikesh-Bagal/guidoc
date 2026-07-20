@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Phone, Building, Info, FileCheck, Map } from 'lucide-react';
 import { officeService } from '../services/officeService';

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../services/userService';
-import { User, Mail, Shield, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Trash2, MapPin, Bell } from 'lucide-react';
+import { User, Mail, Shield, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Trash2, MapPin, Bell, FolderKey } from 'lucide-react';
 import { officeService } from '../services/officeService';
+import { userDocumentService } from '../services/userDocumentService';
 import { Link } from 'react-router-dom';
 import './Profile.css';
 
@@ -15,6 +16,7 @@ export default function ProfilePage() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appointments, setAppointments] = useState([]);
+  const [myDocsStats, setMyDocsStats] = useState({ total: 0, valid: 0, expired: 0, expiring: 0 });
   const [notificationPrefs, setNotificationPrefs] = useState({
     email: true,
     inApp: true,
@@ -29,8 +31,21 @@ export default function ProfilePage() {
       setDisplayName(currentUser.displayName || '');
       fetchAppointments();
       fetchPreferences();
+      fetchMyDocsStats();
     }
   }, [currentUser]);
+
+  const fetchMyDocsStats = async () => {
+    try {
+      const docs = await userDocumentService.getUserDocuments(currentUser.uid);
+      const valid = docs.filter(d => d.status === 'Valid').length;
+      const expired = docs.filter(d => d.status === 'Expired').length;
+      const expiring = docs.filter(d => d.status === 'Expiring Soon').length;
+      setMyDocsStats({ total: docs.length, valid, expired, expiring });
+    } catch (error) {
+      console.error('Failed to fetch docs stats', error);
+    }
+  };
 
   const fetchAppointments = async () => {
     try {
@@ -285,6 +300,34 @@ export default function ProfilePage() {
                 Reset Password
               </button>
             )}
+          </div>
+        </section>
+
+        <section className="profile-card" style={{ gridColumn: '1 / -1' }}>
+          <div className="profile-card-header">
+            <FolderKey className="profile-icon" size={24} />
+            <h2>Document Statistics</h2>
+          </div>
+          <div className="profile-info-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            <div className="info-group">
+              <span className="info-label">Total Documents</span>
+              <span className="info-value">{myDocsStats.total}</span>
+            </div>
+            <div className="info-group">
+              <span className="info-label">Valid Documents</span>
+              <span className="info-value" style={{ color: '#22c55e', fontWeight: 'bold' }}>{myDocsStats.valid}</span>
+            </div>
+            <div className="info-group">
+              <span className="info-label">Expiring Soon</span>
+              <span className="info-value" style={{ color: '#f59e0b', fontWeight: 'bold' }}>{myDocsStats.expiring}</span>
+            </div>
+            <div className="info-group">
+              <span className="info-label">Expired Documents</span>
+              <span className="info-value" style={{ color: '#ef4444', fontWeight: 'bold' }}>{myDocsStats.expired}</span>
+            </div>
+          </div>
+          <div className="form-actions" style={{ marginTop: '1.5rem' }}>
+            <Link to="/my-documents" className="btn-outline" style={{ textDecoration: 'none', display: 'inline-block' }}>Manage My Documents</Link>
           </div>
         </section>
 

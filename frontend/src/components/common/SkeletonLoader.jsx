@@ -1,4 +1,3 @@
-import React from 'react';
 import './SkeletonLoader.css';
 
 const SkeletonLoader = ({ type = 'text', count = 1, width, height, className = '' }) => {

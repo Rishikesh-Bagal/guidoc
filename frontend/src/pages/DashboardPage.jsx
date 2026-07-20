@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine, Mic, MapPin, Calendar, Bell } from 'lucide-react';
+import { FileText, Search, ShieldCheck, User, Plus, Clock, Activity, Loader2, ScanLine, Mic, MapPin, Calendar, Bell, FolderKey } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { userService } from '../services/userService';
+import { userDocumentService } from '../services/userDocumentService';
 import { officeService } from '../services/officeService';
 import { useNotification } from '../contexts/NotificationContext';
 import SEO from '../components/common/SEO';
@@ -21,11 +22,13 @@ export default function DashboardPage() {
     documentsViewed: 0,
     eligibilityChecks: 0,
     savedGuides: 0,
-    aiConversations: 0
+    aiConversations: 0,
+    myDocumentsCount: 0
   });
   const [recentSearches, setRecentSearches] = useState([]);
   const [savedDocuments, setSavedDocuments] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [recentMyDocs, setRecentMyDocs] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -43,24 +46,30 @@ export default function DashboardPage() {
           eligibilityHistory,
           aiHistory,
           docViewCount,
-          userAppointments
+          userAppointments,
+          myDocs
         ] = await Promise.all([
           userService.getRecentSearches(userId),
           userService.getEligibilityHistory(userId),
           userService.getAIChatHistory(userId),
           userService.getDocumentViewCount(userId),
-          officeService.getUserAppointments(userId)
+          officeService.getUserAppointments(userId),
+          userDocumentService.getUserDocuments(userId)
         ]);
 
         if (isMounted) {
           setRecentSearches(searches);
           setAppointments(userAppointments);
+          setRecentMyDocs(myDocs.slice(0, 3));
           
+          const expiringCount = myDocs.filter(d => d.status === 'Expiring Soon').length;
           setStats(prev => ({
             ...prev,
             documentsViewed: docViewCount,
             eligibilityChecks: eligibilityHistory.length,
-            aiConversations: aiHistory.length
+            aiConversations: aiHistory.length,
+            myDocumentsCount: myDocs.length,
+            expiringDocumentsCount: expiringCount
           }));
         }
       } catch (error) {
@@ -132,15 +141,24 @@ export default function DashboardPage() {
           <span className="stat-value">{loading ? <SkeletonLoader width="40px" height="32px" /> : stats.savedGuides}</span>
           <span className="stat-label">{t('dashboard.savedGuides')}</span>
         </div>
-        <div className="stat-card">
-          <span className="stat-value">{loading ? <SkeletonLoader width="40px" height="32px" /> : stats.aiConversations}</span>
-          <span className="stat-label">{t('dashboard.aiConversations')}</span>
+        <div className="stat-card" style={{ background: 'var(--primary-color)', color: 'white' }}>
+          <span className="stat-value" style={{ color: 'white' }}>{loading ? <SkeletonLoader width="40px" height="32px" /> : stats.myDocumentsCount}</span>
+          <span className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>My Documents</span>
+        </div>
+        <div className="stat-card" style={{ borderLeft: '4px solid #f59e0b' }}>
+          <span className="stat-value" style={{ color: '#f59e0b' }}>{loading ? <SkeletonLoader width="40px" height="32px" /> : stats.expiringDocumentsCount}</span>
+          <span className="stat-label">Expiring Soon</span>
         </div>
       </section>
 
       <section className="dashboard-quick-actions">
         <h2>{t('dashboard.quickActions')}</h2>
         <div className="action-grid">
+          <div className="action-card" onClick={() => navigate('/my-documents')} style={{cursor: 'pointer', borderColor: 'var(--primary-color)'}}>
+            <FolderKey className="action-icon" style={{ color: 'var(--primary-color)' }} />
+            <h3>My Documents</h3>
+            <p>Manage and analyze your personal documents</p>
+          </div>
           <div className="action-card" onClick={() => navigate('/search')} style={{cursor: 'pointer'}}>
             <Search className="action-icon" />
             <h3>{t('dashboard.searchDocuments')}</h3>
@@ -180,6 +198,41 @@ export default function DashboardPage() {
       </section>
 
       <div className="dashboard-main-grid">
+        <section className="dashboard-panel">
+          <div className="panel-header">
+            <h2>Recently Uploaded</h2>
+            <FolderKey className="panel-icon" size={20} />
+          </div>
+          {loading ? (
+            <div className="panel-loading" style={{ padding: '20px' }}>
+              <SkeletonLoader type="text" count={3} height="40px" />
+            </div>
+          ) : recentMyDocs.length > 0 ? (
+            <ul className="panel-list">
+              {recentMyDocs.map((doc) => (
+                <li key={doc.id} className="panel-list-item" onClick={() => navigate(`/my-documents`)} style={{cursor: 'pointer'}}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <span className="item-title">{doc.documentName}</span>
+                    <span className="item-meta">{doc.documentType}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
+                    <span className={`item-badge ${doc.status === 'Valid' ? 'status-valid' : doc.status === 'Expired' ? 'status-expired' : 'status-expiring'}`} style={{
+                      backgroundColor: doc.status === 'Valid' ? 'rgba(34, 197, 94, 0.1)' : doc.status === 'Expired' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                      color: doc.status === 'Valid' ? '#22c55e' : doc.status === 'Expired' ? '#ef4444' : '#f59e0b'
+                    }}>
+                      {doc.status}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+             <div className="panel-empty">
+               <p>No recent documents</p>
+             </div>
+          )}
+        </section>
+
         <section className="dashboard-panel">
           <div className="panel-header">
             <h2>{t('dashboard.recentSearches')}</h2>

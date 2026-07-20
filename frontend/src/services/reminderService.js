@@ -1,7 +1,7 @@
 import { officeService } from './officeService';
 import { notificationService } from './notificationService';
 import { emailService } from './emailService';
-import { collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 class ReminderService {

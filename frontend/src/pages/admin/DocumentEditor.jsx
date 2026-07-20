@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { documentService } from '../../services/documentService';
 import './DocumentEditor.css';
@@ -33,20 +33,9 @@ export default function DocumentEditor() {
     'Identity', 'Vehicle', 'Income & Taxes', 'Property', 'Education', 'Health', 'Other'
   ];
 
-  useEffect(() => {
-    if (isEdit) {
-      fetchDocument();
-    }
-  }, [id]);
-
   const fetchDocument = async () => {
     try {
       setLoading(true);
-      // Wait, documentService.getDocumentBySlug maps data.
-      // But we stored rawDoc in the mapping specifically for editing!
-      // Let's fetch all admin documents and find this one, or we can just fetch it by slug
-      // If we pass ID in URL, we need an endpoint to get by ID or slug. The routing uses doc.id which is doc._id or slug.
-      // Assuming id is slug for now since the mapping uses slug as id fallback.
       const doc = await documentService.getDocumentBySlug(id);
       if (doc && doc.rawDoc) {
         const raw = doc.rawDoc;
@@ -74,6 +63,12 @@ export default function DocumentEditor() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isEdit) {
+      fetchDocument();
+    }
+  }, [id, isEdit]); // added isEdit to deps
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

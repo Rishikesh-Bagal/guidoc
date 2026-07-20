@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNotification } from '../contexts/NotificationContext';
 import { Bell, Check, Trash2, Search, Info, AlertTriangle, Calendar, FileText, Settings, Sparkles, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';

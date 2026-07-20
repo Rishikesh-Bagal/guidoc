@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { trackerService } from '../services/trackerService';
 import { Plus, Trash2, Check, Clock, Loader2, FileText, ChevronRight } from 'lucide-react';

@@ -1,4 +1,3 @@
-import React from 'react';
 import EligibilityWizard from '../components/EligibilityWizard/EligibilityWizard';
 
 const WizardPage = () => {
